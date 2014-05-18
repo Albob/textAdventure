@@ -14,7 +14,7 @@ struct String
 {
     const char * const cstr;
     unsigned int refCount;
-    bool isAutoreleased = true;
+    int isAutoreleased;
 };
 
 void str_retain(StringRef);
@@ -22,6 +22,7 @@ void str_release(StringRef);
 void str_autorelease(StringRef);
 StringRef str_createWithCString(const char * c_string);
 StringRef str_createWithStringRef(StringRef ref);
+StringRef str_initWithCString(const char * c_string);
 const char * str_getCString(StringRef);
 
 #endif 

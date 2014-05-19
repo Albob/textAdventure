@@ -10,7 +10,8 @@
 
 int main(int arg_number, char * arguments[])
 {
-    printf("Salut\n");
+    StringRef ref = str_createWithCString("bonjour");
+    printf("File ref: %u\n", ref);
     return 0;
 }
 

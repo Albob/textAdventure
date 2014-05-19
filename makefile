@@ -1,18 +1,23 @@
 CC=gcc
-CFLAGS=-g -Wall -I./Iib -Lalbob
+CFLAGS=-g -Wall -I./lib -L. -lalbob
+LIB=libalbob.a
 TARGET=textAdventure
 
-textAdventure: libalbob.a main.c
+textAdventure: ${LIB} main.c
 	${CC} ${CFLAGS} main.c -o ${TARGET}
 
-build/string.o: lib/albob/string.h lib/albob/string.c
+build:
+	mkdir -p build
+
+build/string.o: build lib/albob/string.h lib/albob/string.c
 	${CC} ${CFLAGS} -c lib/albob/string.c -o build/string.o
 
-libalbob.a: build/string.o
-	ar ruv libalbob.a build/string.o
-	ranlib libalbob.a
+${LIB}: build/string.o
+	ar ruv ${LIB} build/string.o
+	ranlib ${LIB}
 
 clean-all: 
 	rm -fr ${TARGET}
+	rm -fr ${LIB}
 	rm -fr *.o
 	rm -fr build/*

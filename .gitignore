@@ -24,3 +24,7 @@
 
 # Text swap and backup files
 *.swp
+
+# Apple debug symbols
+*.dSym
+textAdventure

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -Ilib/
+CFLAGS=-g -Wall -Ilib/ -std=c11
 LIB=libalbob.a
 TARGET=textAdventure
 

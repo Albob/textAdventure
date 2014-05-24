@@ -17,12 +17,14 @@ struct String
     int isAutoreleased;
 };
 
+void initStringPool();
+
 void str_retain(StringRef);
 void str_release(StringRef);
 void str_autorelease(StringRef);
 StringRef str_createWithCString(const char * c_string);
 StringRef str_createWithStringRef(StringRef ref);
-StringRef str_initWithCString(const char * c_string);
+void str_initWithCString(StringRef ref, const char * c_string);
 const char * str_getCString(StringRef);
 
 #endif 

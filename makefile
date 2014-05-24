@@ -1,10 +1,10 @@
 CC=gcc
-CFLAGS=-g -Wall -I./lib -L. -lalbob
+CFLAGS=-g -Wall -Ilib/
 LIB=libalbob.a
 TARGET=textAdventure
 
 textAdventure: ${LIB} main.c
-	${CC} ${CFLAGS} main.c -o ${TARGET}
+	${CC} ${CFLAGS} -o ${TARGET} main.c ${LIB}
 
 build:
 	mkdir -p build

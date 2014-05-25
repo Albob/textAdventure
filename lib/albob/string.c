@@ -87,3 +87,8 @@ str_createWithStringRef(StringRef other_ref)
     return ref;
 }
 
+const char *
+str_getCString(StringRef ref)
+{
+    return g_stringPool[ref].cstr;
+}

@@ -15,9 +15,9 @@ int main(int arg_number, char * arguments[])
 
     // do stuff
     StringRef ref1 = str_createWithCString("bonjour");
-    printf("Bonjour ref: %u\n", ref1);
+    printf("Ref: %u, Content:%s\n", ref1, str_getCString(ref1));
     StringRef ref2 = str_createWithCString("buenos dias");
-    printf("buenos dias ref: %u\n", ref2);
+    printf("Ref: %u, Content:%s\n", ref2, str_getCString(ref2));
 
     // exit
     return 0;

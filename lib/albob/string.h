@@ -8,23 +8,19 @@
 #ifndef tae_string_h
 #define tae_string_h
 
-typedef unsigned int StringRef;
+typedef unsigned int uint;
+typedef uint StringRef;
 
-struct String
-{
-    const char * const cstr;
-    unsigned int refCount;
-    int isAutoreleased;
-};
+enum { kBadStringRef = 0 };
 
 void initStringPool();
 
 void str_retain(StringRef);
 void str_release(StringRef);
 void str_autorelease(StringRef);
+/** Returns 0 if impossible to allocate a new string. */
 StringRef str_createWithCString(const char * c_string);
 StringRef str_createWithStringRef(StringRef ref);
-void str_initWithCString(StringRef ref, const char * c_string);
 const char * str_getCString(StringRef);
 
 #endif 

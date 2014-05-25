@@ -1,6 +1,6 @@
 /*
 *
-* Copyright Alexis Bauchu
+* Copyright Alexis Bauchu 2014
 *
 *
 */
@@ -14,8 +14,10 @@ int main(int arg_number, char * arguments[])
     initStringPool();
 
     // do stuff
-    StringRef ref = str_createWithCString("bonjour");
-    printf("File ref: %u\n", ref);
+    StringRef ref1 = str_createWithCString("bonjour");
+    printf("Bonjour ref: %u\n", ref1);
+    StringRef ref2 = str_createWithCString("buenos dias");
+    printf("buenos dias ref: %u\n", ref2);
 
     // exit
     return 0;

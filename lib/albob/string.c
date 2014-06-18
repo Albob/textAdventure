@@ -66,14 +66,22 @@ freeRef(StringRef ref)
     checkValidRef(ref);
 
     g_stringFreeList[ref] = kFree;
+    free((void*)g_stringPool[ref].cstr);
     g_stringPool[ref].cstr = NULL;
 }
 
 StringRef
 str_createWithCString(const char * c_string)
 {
+    if (c_string == NULL)
+        return 0;
+
     StringRef ref = allocRef();
-    g_stringPool[ref].cstr = c_string;
+    size_t length = strlen(c_string);
+    char * new_str = malloc(sizeof(char) * (length + 1));
+    memcpy(new_str, c_string, sizeof(char) * length);
+    new_str[length] = '\0';
+    g_stringPool[ref].cstr = new_str;
     return ref;
 }
 

@@ -8,6 +8,11 @@
 #include <albob/string.h>
 #include <stdio.h>
 
+void debug(StringRef ref)
+{
+    printf("Ref: %u, Content: \"%s\"\n", ref, str_getCString(ref));
+}
+
 int main(int arg_number, char * arguments[])
 {
     // init engine
@@ -15,9 +20,9 @@ int main(int arg_number, char * arguments[])
 
     // do stuff
     StringRef ref1 = str_createWithCString("bonjour");
-    printf("Ref: %u, Content:%s\n", ref1, str_getCString(ref1));
+    debug(ref1);
     StringRef ref2 = str_createWithCString("buenos dias");
-    printf("Ref: %u, Content:%s\n", ref2, str_getCString(ref2));
+    debug(ref2);
 
     // exit
     return 0;

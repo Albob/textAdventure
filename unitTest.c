@@ -8,11 +8,12 @@
 */
 
 #include <albob/string.h>
-#include <stdio.h>
+#include <albob/debug.h>
 
 void debug(StringRef ref)
 {
-    printf("Ref: %u, Content: \"%s\"\n", ref, str_getCString(ref));
+    // debugLog("Ref: %u, Content: \"%s\"\n", ref, str_getCString(ref));
+    debugLogLn(ref);
 }
 
 int main(int arg_number, char * arguments[])

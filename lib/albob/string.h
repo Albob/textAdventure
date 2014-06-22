@@ -5,8 +5,8 @@
 * Define a string type and function to manipulate them.
 */
 
-#ifndef tae_string_h
-#define tae_string_h
+#ifndef libalbob_string_h
+#define libalbob_string_h
 
 typedef unsigned int uint;
 typedef uint StringRef;

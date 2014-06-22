@@ -1,7 +1,9 @@
 /*
 *
 * Copyright Alexis Bauchu 2014
-*
+* 
+* This is the unit test set. The program exits successfully
+* if all the tests ran as expected.
 *
 */
 
@@ -15,9 +17,6 @@ void debug(StringRef ref)
 
 int main(int arg_number, char * arguments[])
 {
-    // init engine
-    initStringPool();
-
     // do stuff
     StringRef ref1 = str_createWithCString("bonjour");
     debug(ref1);

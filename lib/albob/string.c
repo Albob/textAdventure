@@ -17,8 +17,8 @@ typedef struct
     uint refCount;
 } String;
 
-static String g_stringPool[ kStringPoolSize ];
-static int g_stringFreeList[ kStringPoolSize ];
+static String * g_stringPool = NULL;
+static int    * g_stringFreeList = NULL;
 
 void
 initString(String * str)
@@ -30,10 +30,16 @@ initString(String * str)
 void
 initStringPool()
 {
-    for (uint i = 0; i < kStringPoolSize; ++i)
+    if (g_stringPool == NULL)
     {
-        initString(&g_stringPool[i]);
-        g_stringFreeList[i] = kFree;
+        g_stringPool = malloc(sizeof(String) * kStringPoolSize);
+        g_stringFreeList = malloc(sizeof(int) * kStringPoolSize);
+
+        for (uint i = 0; i < kStringPoolSize; ++i)
+        {
+            initString(&g_stringPool[i]);
+            g_stringFreeList[i] = kFree;
+        }
     }
 }
 
@@ -50,14 +56,16 @@ checkValidRef(StringRef ref)
 StringRef
 allocRef()
 {
-    for (uint i = kStringPoolSize; i > 0; --i) {
+    initStringPool();
+
+    for (uint i = 0; i < kStringPoolSize; i++) {
         if (g_stringFreeList[i] == kFree) {
             g_stringFreeList[i] = kAllocated;
             initString(&g_stringPool[i]);
             return i;
         }
     }
-    
+
     return kBadStringRef;
 }
 
@@ -101,3 +109,4 @@ str_getCString(StringRef ref)
 {
     return g_stringPool[ref].cstr;
 }
+

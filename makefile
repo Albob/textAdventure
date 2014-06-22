@@ -1,10 +1,17 @@
 CC=gcc
 CFLAGS=-g -Wall -Ilib/ -std=c11
 LIB=libalbob.a
-TARGET=textAdventure
+GAME=textAdventure
+UNITTEST=unitTest
 
-textAdventure: ${LIB} main.c
-	${CC} ${CFLAGS} -o ${TARGET} main.c ${LIB}
+all: ${GAME} ${UNITTEST} 
+	echo "Compiling all targets..."
+
+${GAME}: ${LIB} ${GAME}.c
+	${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB}
+
+${UNITTEST}: ${LIB} ${UNITTEST}.c
+	${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB}
 
 build:
 	mkdir -p build
@@ -17,7 +24,7 @@ ${LIB}: build/string.o
 	ranlib ${LIB}
 
 clean-all: 
-	rm -fr ${TARGET}
+	rm -fr ${GAME}
 	rm -fr ${LIB}
 	rm -fr *.o
 	rm -fr build/*

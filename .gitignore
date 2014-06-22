@@ -28,3 +28,4 @@
 # Apple debug symbols
 *.dSym
 textAdventure
+unitTest

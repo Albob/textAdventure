@@ -3,33 +3,34 @@ CFLAGS=-g -Wall -Ilib/ -std=c11
 LIB=libalbob.a
 GAME=textAdventure
 UNITTEST=unitTest
+BUILD_DIR=.build
 
 all: ${GAME} ${UNITTEST} 
-	echo "Compiling all targets..."
 
 ${GAME}: ${LIB} ${GAME}.c
-	${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB}
+	@${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB}
 
 ${UNITTEST}: ${LIB} ${UNITTEST}.c
-	${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB}
+	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB}
 
-build:
-	mkdir -p build
+${BUILD_DIR}/string.o: lib/albob/string.c lib/albob/string.h
+	@mkdir -p ${BUILD_DIR}
+	@${CC} ${CFLAGS} -c $< -o $@
 
-build/string.o: build lib/albob/string.h lib/albob/string.c
-	${CC} ${CFLAGS} -c lib/albob/string.c -o build/string.o
+${BUILD_DIR}/debug.o: lib/albob/debug.c lib/albob/debug.h
+	@mkdir -p ${BUILD_DIR}
+	@${CC} ${CFLAGS} -c $< -o $@
 
-build/debug.o: build lib/albob/$*.h lib/albob/$*.c
-	${CC} ${CFLAGS} -c $*.c -o $@
-
-${LIB}: $(wildcard build/*.o)
-	ar ruv ${LIB} $<
-	ranlib ${LIB}
+${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o
+	@echo $^
+	@ar ruv ${LIB} $^
+	@ranlib ${LIB}
 
 .PHONY: clean-all
 
 clean-all: 
-	rm -fr ${GAME}
-	rm -fr ${LIB}
-	rm -fr *.o
-	rm -fr build
+	@rm -fr ${GAME}
+	@rm -fr ${UNITTEST}
+	@rm -fr ${LIB}
+	@rm -fr *.o
+	@rm -fr build

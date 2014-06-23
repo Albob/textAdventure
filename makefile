@@ -35,3 +35,5 @@ clean-all:
 	@rm -fr ${BUILD_DIR}
 	@rm -fr *.o
 	@rm -fr *.dSym
+	@rm -fr *.bak
+

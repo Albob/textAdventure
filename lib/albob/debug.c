@@ -12,7 +12,7 @@
 
 void debugLog(StringRef ref)
 {
-    printf(str_getCString(ref));
+    printf("%s", str_getCString(ref));
 }
 
 void debugLogLn(StringRef ref)

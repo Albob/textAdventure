@@ -32,5 +32,6 @@ clean-all:
 	@rm -fr ${GAME}
 	@rm -fr ${UNITTEST}
 	@rm -fr ${LIB}
+	@rm -fr ${BUILD_DIR}
 	@rm -fr *.o
-	@rm -fr build
+	@rm -fr *.dSym

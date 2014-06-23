@@ -28,12 +28,15 @@ ${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o
 
 .PHONY: clean-all
 
-clean-all: 
+clean-tmp:
+	@rm -fr *.swp
+	@rm -fr *.bak
+
+clean-all: clean-tmp
 	@rm -fr ${GAME}
 	@rm -fr ${UNITTEST}
 	@rm -fr ${LIB}
 	@rm -fr ${BUILD_DIR}
 	@rm -fr *.o
 	@rm -fr *.dSym
-	@rm -fr *.bak
 

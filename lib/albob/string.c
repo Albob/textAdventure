@@ -80,7 +80,7 @@ freeRef(StringRef ref)
 }
 
 StringRef
-str_createWithCString(const char * c_string)
+strMake(const char * c_string)
 {
     if (c_string == NULL)
         return 0;
@@ -95,7 +95,7 @@ str_createWithCString(const char * c_string)
 }
 
 StringRef
-str_createWithStringRef(StringRef other_ref)
+strCopy(StringRef other_ref)
 {
     checkValidRef(other_ref);
 

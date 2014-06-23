@@ -19,8 +19,8 @@ void str_retain(StringRef);
 void str_release(StringRef);
 void str_autorelease(StringRef);
 /** Returns 0 if impossible to allocate a new string. */
-StringRef str_createWithCString(const char * c_string);
-StringRef str_createWithStringRef(StringRef ref);
+StringRef strMake(const char * c_string);
+StringRef strCopy(StringRef ref);
 const char * str_getCString(StringRef);
 
 #endif 

@@ -19,9 +19,9 @@ void debug(StringRef ref)
 int main(int arg_number, char * arguments[])
 {
     // do stuff
-    StringRef ref1 = str_createWithCString("bonjour");
+    StringRef ref1 = strMake("bonjour");
     debug(ref1);
-    StringRef ref2 = str_createWithCString("buenos dias");
+    StringRef ref2 = strMake("buenos dias");
     debug(ref2);
 
     // exit

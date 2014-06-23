@@ -105,7 +105,7 @@ strCopy(StringRef other_ref)
 }
 
 const char *
-str_getCString(StringRef ref)
+strCStr(StringRef ref)
 {
     return g_stringPool[ref].cstr;
 }

@@ -12,7 +12,7 @@
 
 void debug(StringRef ref)
 {
-    // debugLog("Ref: %u, Content: \"%s\"\n", ref, str_getCString(ref));
+    // debugLog("Ref: %u, Content: \"%s\"\n", ref, strCStr(ref));
     debugLogLn(ref);
 }
 

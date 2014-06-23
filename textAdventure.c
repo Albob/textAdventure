@@ -10,7 +10,7 @@
 
 void debug(StringRef ref)
 {
-    printf("Ref: %u, Content: \"%s\"\n", ref, str_getCString(ref));
+    printf("Ref: %u, Content: \"%s\"\n", ref, strCStr(ref));
 }
 
 int main(int arg_number, char * arguments[])

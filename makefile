@@ -26,7 +26,7 @@ ${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o
 	@ar ruv ${LIB} $^
 	@ranlib ${LIB}
 
-.PHONY: clean-all
+.PHONY: clean-tmp
 
 clean-tmp:
 	@rm -fr *.swp
@@ -38,5 +38,5 @@ clean-all: clean-tmp
 	@rm -fr ${LIB}
 	@rm -fr ${BUILD_DIR}
 	@rm -fr *.o
-	@rm -fr *.dSym
+	@rm -fr *.dSYM
 

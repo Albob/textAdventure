@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -Ilib/ -std=c11
+CFLAGS=-g -Wall -Ilib/ -std=c11 -lreadline
 LIB=libalbob.a
 GAME=textAdventure
 UNITTEST=unitTest

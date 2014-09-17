@@ -8,52 +8,41 @@
 #include <albob/string.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <termios.h>
+#include <stdlib.h>
+#include <string.h>
+#include <readline/readline.h>
 
 void debug(StringRef ref)
 {
     printf("<DEBUG>Ref: %u, Content: \"%s\"\n", ref, strCStr(ref));
 }
 
-
-void ttyCanonOff(void)
-{
-    tcgetattr(fileno(stdin), &t); //get the current terminal I/O structure
-    t.c_lflag &= ~ICANON; //Manipulate the flag bits to do what you want it to do
-    tcsetattr(fileno(stdin), TSCANOW, &t); //Apply the new settings
-}
-
-void ttyCanonOn(void)
-{
-    tcgetattr(STDIN_FILENO, &t); //get the current terminal I/O structure
-    t.c_lflag |= ICANON; //Manipulate the flag bits to do what you want it to do
-    tcsetattr(STDIN_FILENO, TSCANOW, &t); //Apply the new settings
-}
-
 int main(int arg_number, char * arguments[])
 {
     puts("Welcome, to ADVENTURE GAME!!");
     int must_exit = 0;
+    char * line = NULL;
 
     do
     {
-        int c = 10;
-        do
-        {
-            c = getchar();
+        if (line != NULL) {
+            free(line);
+            line = NULL;
+        }
 
-            if (c == EOF)
-            {
-                must_exit = 1;
-                break;
-            }
-            else if (c == '\n') {
-                putchar('\n');
-            }
-            else {
-                putchar('x');
-            }
-        } while (c != '\n');
+        line = readline("> ");
+
+        if (line == NULL) {
+            continue;
+        }
+        
+        if (strlen(line) > 0) {
+            add_history(line);
+        }
+
+        if (strcmp(line, "exit") == 0) {
+            must_exit = 1;
+        }
     } while (must_exit == 0);
 
     // exit

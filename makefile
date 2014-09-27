@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-g -Wall -Ilib/ -std=c11 -lreadline
+CFLAGS=-g -Wall -Ilib/ -std=c11
+LINK_FLAGS=-static -L/usr/lib/i386-linux-gnu -I/usr/include -lreadline -lhistory
 LIB=libalbob.a
 GAME=textAdventure
 UNITTEST=unitTest
@@ -8,10 +9,10 @@ BUILD_DIR=.build
 all: ${GAME} ${UNITTEST} 
 
 ${GAME}: ${LIB} ${GAME}.c
-	@${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB}
+	@${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB} ${LINK_FLAGS}
 
 ${UNITTEST}: ${LIB} ${UNITTEST}.c
-	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB}
+	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB} ${LINK_FLAGS}
 
 ${BUILD_DIR}/string.o: lib/albob/string.c lib/albob/string.h
 	@mkdir -p ${BUILD_DIR}

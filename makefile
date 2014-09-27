@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -Ilib/ -std=c11
-LINK_FLAGS=-static -L/usr/lib/i386-linux-gnu -I/usr/include -lreadline -lhistory
+LINK_FLAGS=-L/usr/lib/i386-linux-gnu -I/usr/include -lreadline -lhistory
 LIB=libalbob.a
 GAME=textAdventure
 UNITTEST=unitTest

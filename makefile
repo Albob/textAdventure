@@ -1,6 +1,15 @@
 CC=gcc
 CFLAGS=-g -Wall -Ilib/ -std=c11
-LINK_FLAGS=-L/usr/lib/i386-linux-gnu -I/usr/include -lreadline -lhistory
+OS=$(shell uname -s)
+
+ifeq ($(OS),"Linux")
+    $(info "Linux config")
+    LINK_FLAGS=-L/usr/lib/i386-linux-gnu -I/usr/include -lreadline
+else
+    $(info "MacOS config")
+    LINK_FLAGS=-lreadline
+endif
+
 LIB=libalbob.a
 GAME=textAdventure
 UNITTEST=unitTest

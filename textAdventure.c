@@ -53,7 +53,7 @@ void cmd_exit();
 command_t command_list[] = {
     { COM_HELP, cmd_help, "Displays this help" },
     { COM_TAKE, cmd_take, "Take <something>. Puts an object in your inventory" },
-    { COM_GREET, cmd_greet, "Take <something>. Puts an object in your inventory" },
+    { COM_GREET, cmd_greet, "Say hello of course!" },
     { COM_EXIT, cmd_exit, "Quits the game" },
     { NULL, NULL, NULL }
 };
@@ -111,6 +111,43 @@ char * custom_completer(const char * text, int state)
     return NULL;
 }
 
+void process_command(const char * line)
+{
+    if (line == NULL) return;
+
+    int length = strlen(line);
+    char * name = (char*)malloc(sizeof(char) * length + 1);
+    memset(name, '\0', length + 1);
+
+    // Isolate the first word
+    for (int i = 0, index = 0; i < length + 1; ++i)
+    {
+        if (line[i] == ' ' && index > 0)
+        {
+            break;
+        }
+        else if (line[i] != ' ')
+        {
+            name[index] = line[i];
+            ++index;
+        }
+    }
+
+    // Find the corresponding command
+    command_t cmd;
+
+    for (int i = 0; ; ++i)
+    {
+        cmd = command_list[i];
+        if (cmd.name == NULL) break;
+
+        if (strncmp(cmd.name, name, length) == 0)
+        {
+            cmd.callback();
+        }
+    }
+}
+
 int main(int arg_number, char * arguments[])
 {
     // Initializing the Readline library
@@ -137,9 +174,7 @@ int main(int arg_number, char * arguments[])
             add_history(line);
         }
 
-        if (strcmp(line, "exit") == 0) {
-            g_must_exit = 1;
-        }
+        process_command(line);
     } while (g_must_exit == 0);
 
     // exit

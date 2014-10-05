@@ -5,26 +5,11 @@
 *
 */
 
-#include <albob/string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-
-#define COM_HELP "help"
-#define COM_EXIT "exit"
-
-char * COMMANDS[] = {
-    COM_HELP,
-    COM_EXIT,
-    NULL
-};
-
-void debug(StringRef ref)
-{
-    printf("<DEBUG>Ref: %u, Content: \"%s\"\n", ref, strCStr(ref));
-}
 
 void say(const char * message)
 {
@@ -45,6 +30,63 @@ char * copy_string(const char * str)
 #define dump_string(x) printf(#x ": %s\n", x);
 #define dump_int(x) printf(#x ": %d\n", x);
 
+typedef void (*command_func_t)(void);
+
+typedef struct {
+    char * name;
+    command_func_t callback;
+    char * description;
+} command_t ;
+
+#define COM_HELP     "help"
+#define COM_TAKE     "take"
+#define COM_GREET    "greet"
+#define COM_EXIT     "exit"
+
+static int g_must_exit = 0;
+
+void cmd_help();
+void cmd_take();
+void cmd_greet();
+void cmd_exit();
+
+command_t command_list[] = {
+    { COM_HELP, cmd_help, "Displays this help" },
+    { COM_TAKE, cmd_take, "Take <something>. Puts an object in your inventory" },
+    { COM_GREET, cmd_greet, "Take <something>. Puts an object in your inventory" },
+    { COM_EXIT, cmd_exit, "Quits the game" },
+    { NULL, NULL, NULL }
+};
+
+void cmd_help()
+{
+    for (int i = 0; ; ++i)
+    {
+        command_t cmd = command_list[i];
+        
+        if (cmd.name == NULL) {
+            break;
+        }
+
+        printf("%s: %s\n", cmd.name, cmd.description);
+    }
+}
+
+void cmd_take()
+{
+    say("There's nothing to take");
+}
+
+void cmd_greet()
+{
+    say("Hello!");
+}
+
+void cmd_exit()
+{
+    g_must_exit = 1;
+}
+
 char * custom_completer(const char * text, int state)
 {
     static int index, length;
@@ -59,7 +101,7 @@ char * custom_completer(const char * text, int state)
 
     char * name = NULL;
     do {
-        name = COMMANDS[index++];
+        name = command_list[index++].name;
 
         if (name && strncmp(name, text, length) == 0) {
             return copy_string(name);
@@ -75,8 +117,7 @@ int main(int arg_number, char * arguments[])
     rl_completion_entry_function = custom_completer;
 
     // Game loop
-    puts("Welcome, to ADVENTURE GAME!!");
-    int must_exit = 0;
+    puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");
     char * line = NULL;
 
     do
@@ -97,9 +138,9 @@ int main(int arg_number, char * arguments[])
         }
 
         if (strcmp(line, "exit") == 0) {
-            must_exit = 1;
+            g_must_exit = 1;
         }
-    } while (must_exit == 0);
+    } while (g_must_exit == 0);
 
     // exit
     puts("See you next time!!");

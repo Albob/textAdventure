@@ -3,10 +3,10 @@ CFLAGS=-g -Wall -Ilib/ -std=c11
 OS=$(shell uname -s)
 
 ifeq ($(OS), Linux)
-    $(info "Linux config")
+    #$(info "Linux config")
     LINK_FLAGS=-L/usr/lib/i386-linux-gnu -I/usr/include -lreadline
 else
-    $(info "MacOS config")
+    #$(info "MacOS config")
     LINK_FLAGS=-lreadline
 endif
 

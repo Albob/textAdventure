@@ -38,25 +38,36 @@ typedef struct {
     char * description;
 } command_t ;
 
+#define MAX_INVENTORY 32
+
+typedef struct {
+    const char* inventory[MAX_INVENTORY];
+} player_t;
+
 #define COM_HELP     "help"
 #define COM_TAKE     "take"
-#define COM_GREET    "greet"
+#define COM_LIST     "list"
+#define COM_LOOK     "look"
 #define COM_EXIT     "exit"
 
 static int g_must_exit = 0;
 
 void cmd_help();
 void cmd_take();
-void cmd_greet();
+void cmd_list();
+void cmd_look();
 void cmd_exit();
 
 command_t command_list[] = {
-    { COM_HELP, cmd_help, "Displays this help" },
-    { COM_TAKE, cmd_take, "Take <something>. Puts an object in your inventory" },
-    { COM_GREET, cmd_greet, "Say hello of course!" },
-    { COM_EXIT, cmd_exit, "Quits the game" },
+    { COM_HELP, cmd_help, "Displays this help." },
+    { COM_TAKE, cmd_take, "Takes <something> and puts it in your inventory." },
+    { COM_LIST, cmd_list, "Lists the content of your inventory." },
+    { COM_LOOK, cmd_look, "Looks around you." },
+    { COM_EXIT, cmd_exit, "Quits the game." },
     { NULL, NULL, NULL }
 };
+
+player_t player;
 
 void cmd_help()
 {
@@ -78,9 +89,28 @@ void cmd_take()
     say("There's nothing to take");
 }
 
-void cmd_greet()
+void cmd_list()
 {
-    say("Hello!");
+    const char * item = player.inventory[0];
+
+    if (item == NULL)
+    {
+        say("Your inventory is empty.");
+    }
+    else
+    {
+        say("In your bag you have:");
+        for (int i = 0; ; ++i)
+        {
+            item = player.inventory[i];
+            printf("%d) %s\n", i, item);
+        }
+    }
+}
+
+void cmd_look()
+{
+    say("Un escalier de fer... Un couloir étroit et obscur...");
 }
 
 void cmd_exit()
@@ -158,6 +188,9 @@ int main(int arg_number, char * arguments[])
 {
     // Initializing the Readline library
     rl_completion_entry_function = custom_completer;
+
+    // Init the player
+    memset(player.inventory, 0, MAX_INVENTORY);
 
     // Game loop
     puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");

@@ -60,6 +60,7 @@ command_t command_list[] = {
 
 void cmd_help()
 {
+    say("Here are the commands you can type and their expected results:");
     for (int i = 0; ; ++i)
     {
         command_t cmd = command_list[i];
@@ -68,7 +69,7 @@ void cmd_help()
             break;
         }
 
-        printf("%s: %s\n", cmd.name, cmd.description);
+        printf("- \"%s\": %s\n", cmd.name, cmd.description);
     }
 }
 
@@ -141,10 +142,15 @@ void process_command(const char * line)
         cmd = command_list[i];
         if (cmd.name == NULL) break;
 
-        if (strncmp(cmd.name, name, length) == 0)
+        if (strcmp(cmd.name, name) == 0)
         {
             cmd.callback();
+            break;
         }
+    }
+
+    if (cmd.name == NULL) {
+        say("I don't understand...");
     }
 }
 
@@ -164,7 +170,7 @@ int main(int arg_number, char * arguments[])
             line = NULL;
         }
 
-        line = readline("> ");
+        line = readline("\n> ");
 
         if (line == NULL) {
             continue;

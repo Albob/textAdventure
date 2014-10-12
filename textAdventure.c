@@ -30,6 +30,10 @@ char * copy_string(const char * str)
 #define dump_string(x) printf(#x ": %s\n", x);
 #define dump_int(x) printf(#x ": %d\n", x);
 
+#define MAX_INVENTORY 32
+#define MAX_ITEMS     8
+
+// Game types
 typedef void (*command_func_t)(void);
 
 typedef struct {
@@ -38,7 +42,28 @@ typedef struct {
     char * description;
 } command_t ;
 
-#define MAX_INVENTORY 32
+typedef struct {
+    char* id;
+    char* name;
+    char* inventory_desc;
+    char* scene_desc;
+} item_t;
+
+typedef struct {
+    char* id;
+    char* description;
+    item_t *item_list[MAX_ITEMS];
+} scene_t;
+
+void initScene(scene_t * s, char* id, char* description)
+{
+    if (s == NULL) return;
+    s->id = id;
+    s->description = description;
+    memset(s->item_list, 0, sizeof(item_t*) * MAX_ITEMS);
+}
+
+// TODO: void releaseScene(scene_t * s);
 
 typedef struct {
     const char* inventory[MAX_INVENTORY];
@@ -50,15 +75,14 @@ typedef struct {
 #define COM_LOOK     "look"
 #define COM_EXIT     "exit"
 
-static int g_must_exit = 0;
-
 void cmd_help();
 void cmd_take();
 void cmd_list();
 void cmd_look();
 void cmd_exit();
 
-command_t command_list[] = {
+// Globals
+command_t g_command_list[] = {
     { COM_HELP, cmd_help, "Displays this help." },
     { COM_TAKE, cmd_take, "Takes <something> and puts it in your inventory." },
     { COM_LIST, cmd_list, "Lists the content of your inventory." },
@@ -66,15 +90,17 @@ command_t command_list[] = {
     { COM_EXIT, cmd_exit, "Quits the game." },
     { NULL, NULL, NULL }
 };
+static int g_must_exit = 0;
+static player_t g_player;
+static scene_t g_first_scene;
 
-player_t player;
-
+// Command handlers
 void cmd_help()
 {
     say("Here are the commands you can type and their expected results:");
     for (int i = 0; ; ++i)
     {
-        command_t cmd = command_list[i];
+        command_t cmd = g_command_list[i];
         
         if (cmd.name == NULL) {
             break;
@@ -91,7 +117,7 @@ void cmd_take()
 
 void cmd_list()
 {
-    const char * item = player.inventory[0];
+    const char * item = g_player.inventory[0];
 
     if (item == NULL)
     {
@@ -102,7 +128,8 @@ void cmd_list()
         say("In your bag you have:");
         for (int i = 0; ; ++i)
         {
-            item = player.inventory[i];
+            item = g_player.inventory[i];
+            if (item == NULL) break;
             printf("%d) %s\n", i, item);
         }
     }
@@ -118,6 +145,7 @@ void cmd_exit()
     g_must_exit = 1;
 }
 
+// Command parsing
 char * custom_completer(const char * text, int state)
 {
     static int index, length;
@@ -132,7 +160,7 @@ char * custom_completer(const char * text, int state)
 
     char * name = NULL;
     do {
-        name = command_list[index++].name;
+        name = g_command_list[index++].name;
 
         if (name && strncmp(name, text, length) == 0) {
             return copy_string(name);
@@ -148,7 +176,7 @@ void process_command(const char * line)
 
     int length = strlen(line);
     char * name = (char*)malloc(sizeof(char) * length + 1);
-    memset(name, '\0', length + 1);
+    memset(name, '\0', sizeof(char) * length + 1);
 
     // Isolate the first word
     for (int i = 0, index = 0; i < length + 1; ++i)
@@ -169,7 +197,7 @@ void process_command(const char * line)
 
     for (int i = 0; ; ++i)
     {
-        cmd = command_list[i];
+        cmd = g_command_list[i];
         if (cmd.name == NULL) break;
 
         if (strcmp(cmd.name, name) == 0)
@@ -184,13 +212,18 @@ void process_command(const char * line)
     }
 }
 
+// Main
 int main(int arg_number, char * arguments[])
 {
     // Initializing the Readline library
     rl_completion_entry_function = custom_completer;
 
     // Init the player
-    memset(player.inventory, 0, MAX_INVENTORY);
+    memset(g_player.inventory, 0, MAX_INVENTORY);
+
+    // Init the first scene
+    g_first_scene.id = "sc_first";
+    g_first_scene.description = "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.";
 
     // Game loop
     puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");

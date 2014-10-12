@@ -38,29 +38,63 @@ typedef void (*command_func_t)(void);
 
 typedef struct {
     char * name;
-    command_func_t callback;
     char * description;
+    command_func_t callback;
 } command_t ;
 
-typedef struct {
+typedef struct item_t {
     char* id;
     char* name;
     char* inventory_desc;
     char* scene_desc;
+    struct item_t * nextInScene;
 } item_t;
+
+void item_init(item_t * i)
+{
+    i->id = "";
+    i->name = "";
+    i->inventory_desc = "";
+    i->scene_desc = "";
+}
 
 typedef struct {
     char* id;
     char* description;
-    item_t *item_list[MAX_ITEMS];
+    item_t * first_item;
 } scene_t;
 
-void initScene(scene_t * s, char* id, char* description)
+void scene_init(scene_t * s, char* id, char* description)
 {
     if (s == NULL) return;
     s->id = id;
     s->description = description;
-    memset(s->item_list, 0, sizeof(item_t*) * MAX_ITEMS);
+    s->first_item = NULL;
+}
+
+void scene_addItem(scene_t * scene, item_t * item)
+{
+    if (scene == NULL || item == NULL) return;
+    
+    if (scene->first_item == NULL) {
+        scene->first_item = item;
+    }
+    else
+    {
+        item_t * last_item = scene->first_item;
+        while (last_item->nextInScene != NULL) {
+            last_item = last_item->nextInScene;
+        }
+        last_item->nextInScene = item;
+    }
+
+    item->nextInScene = NULL;
+}
+
+void scene_removeItem(scene_t * scene, item_t * item)
+{
+    if (scene == NULL || item == NULL) return;
+
 }
 
 // TODO: void releaseScene(scene_t * s);
@@ -83,11 +117,11 @@ void cmd_exit();
 
 // Globals
 command_t g_command_list[] = {
-    { COM_HELP, cmd_help, "Displays this help." },
-    { COM_TAKE, cmd_take, "Takes <something> and puts it in your inventory." },
-    { COM_LIST, cmd_list, "Lists the content of your inventory." },
-    { COM_LOOK, cmd_look, "Looks around you." },
-    { COM_EXIT, cmd_exit, "Quits the game." },
+    { COM_HELP, "Displays this help.", cmd_help },
+    { COM_TAKE, "Takes <something> and puts it in your inventory.", cmd_take },
+    { COM_LIST, "Lists the content of your inventory.", cmd_list },
+    { COM_LOOK, "Looks around you.", cmd_look },
+    { COM_EXIT, "Quits the game.", cmd_exit },
     { NULL, NULL, NULL }
 };
 static int g_must_exit = 0;
@@ -139,6 +173,12 @@ void cmd_list()
 void cmd_look()
 {
     say(g_current_scene.description);
+    item_t * item = g_current_scene.first_item;
+    while (item != NULL)
+    {
+        say(item->scene_desc);
+        item = item->nextInScene;
+    }
 }
 
 void cmd_exit()
@@ -223,9 +263,24 @@ int main(int arg_number, char * arguments[])
     memset(g_player.inventory, 0, MAX_INVENTORY);
 
     // Init the first scene
-    g_first_scene.id = "sc_first";
-    g_first_scene.description = "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.";
+    scene_init(&g_first_scene, "sc_first", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
     g_current_scene = g_first_scene;
+
+    item_t knife;
+    item_init(&knife);
+    knife.id = "item_knife";
+    knife.name = "knife";
+    knife.inventory_desc = "This is a sharp meat knife.";
+    knife.scene_desc = "There's a knife on the table.";
+    scene_addItem(&g_current_scene, &knife);
+
+    item_t soap;
+    item_init(&soap);
+    soap.id = "item_soap";
+    soap.name = "liquid soap";
+    soap.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
+    soap.scene_desc = "There's liquid soap next to the sink.";
+    scene_addItem(&g_current_scene, &soap);
 
     // Game loop
     puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");

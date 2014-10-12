@@ -92,6 +92,7 @@ command_t g_command_list[] = {
 };
 static int g_must_exit = 0;
 static player_t g_player;
+static scene_t g_current_scene;
 static scene_t g_first_scene;
 
 // Command handlers
@@ -137,7 +138,7 @@ void cmd_list()
 
 void cmd_look()
 {
-    say("Un escalier de fer... Un couloir étroit et obscur...");
+    say(g_current_scene.description);
 }
 
 void cmd_exit()
@@ -224,6 +225,7 @@ int main(int arg_number, char * arguments[])
     // Init the first scene
     g_first_scene.id = "sc_first";
     g_first_scene.description = "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.";
+    g_current_scene = g_first_scene;
 
     // Game loop
     puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");

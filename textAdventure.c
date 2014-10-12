@@ -34,7 +34,7 @@ char * copy_string(const char * str)
 #define MAX_ITEMS     8
 
 // Game types
-typedef void (*command_func_t)(void);
+typedef void (*command_func_t)(const char * line);
 
 typedef struct {
     char * name;
@@ -109,11 +109,11 @@ typedef struct {
 #define COM_LOOK     "look"
 #define COM_EXIT     "exit"
 
-void cmd_help();
-void cmd_take();
-void cmd_list();
-void cmd_look();
-void cmd_exit();
+void cmd_help(const char * line);
+void cmd_take(const char * line);
+void cmd_list(const char * line);
+void cmd_look(const char * line);
+void cmd_exit(const char * line);
 
 // Globals
 command_t g_command_list[] = {
@@ -130,7 +130,7 @@ static scene_t g_current_scene;
 static scene_t g_first_scene;
 
 // Command handlers
-void cmd_help()
+void cmd_help(const char * line)
 {
     say("Here are the commands you can type and their expected results:");
     for (int i = 0; ; ++i)
@@ -145,12 +145,12 @@ void cmd_help()
     }
 }
 
-void cmd_take()
+void cmd_take(const char * line)
 {
     say("There's nothing to take");
 }
 
-void cmd_list()
+void cmd_list(const char * line)
 {
     const char * item = g_player.inventory[0];
 
@@ -170,7 +170,7 @@ void cmd_list()
     }
 }
 
-void cmd_look()
+void cmd_look(const char * line)
 {
     say(g_current_scene.description);
     item_t * item = g_current_scene.first_item;
@@ -181,7 +181,7 @@ void cmd_look()
     }
 }
 
-void cmd_exit()
+void cmd_exit(const char * line)
 {
     g_must_exit = 1;
 }
@@ -243,7 +243,7 @@ void process_command(const char * line)
 
         if (strcmp(cmd.name, name) == 0)
         {
-            cmd.callback();
+            cmd.callback(line);
             break;
         }
     }

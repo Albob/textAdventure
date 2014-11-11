@@ -16,7 +16,7 @@ void say(const char * message)
     printf("%s\n", message);
 }
 
-char * copy_string(const char * str)
+char * string_copy(const char * str)
 {
     if (str == NULL) return NULL;
 
@@ -147,7 +147,8 @@ void cmd_help(const char * line)
 
 void cmd_take(const char * line)
 {
-    say("There's nothing to take");
+    say("You typed:");
+    say(line);
 }
 
 void cmd_list(const char * line)
@@ -187,7 +188,7 @@ void cmd_exit(const char * line)
 }
 
 // Command parsing
-char * custom_completer(const char * text, int state)
+char * command_generator(const char * text, int state)
 {
     static int index, length;
 
@@ -204,11 +205,27 @@ char * custom_completer(const char * text, int state)
         name = g_command_list[index++].name;
 
         if (name && strncmp(name, text, length) == 0) {
-            return copy_string(name);
+            return string_copy(name);
         }
     } while (name != NULL);
 
     return NULL;
+}
+
+char ** custom_completer(const char * text, int start, int end)
+{
+    rl_attempted_completion_over = 1; // prevent readline from providing default completion
+
+    char ** matches = NULL;
+
+    int first_char = 0;
+    while (rl_line_buffer[first_char] == ' ') { first_char++; }
+
+    if (start == 0 || start == first_char) {
+        matches = rl_completion_matches(text, command_generator);
+    }
+
+    return matches;
 }
 
 void process_command(const char * line)
@@ -257,7 +274,7 @@ void process_command(const char * line)
 int main(int arg_number, char * arguments[])
 {
     // Initializing the Readline library
-    rl_completion_entry_function = custom_completer;
+    rl_attempted_completion_function = custom_completer;
 
     // Init the player
     memset(g_player.inventory, 0, MAX_INVENTORY);

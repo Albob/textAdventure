@@ -27,6 +27,23 @@ char * string_copy(const char * str)
     return new_str;
 }
 
+char * string_first_word(const char * input)
+{
+    if (input == NULL) return NULL;
+    int start = 0;
+    while (input[start] == ' ' || input[start] == '\t') start++;
+    if (input[start] == '\0') return NULL;
+    int end = start + 1;
+    while (input[end] != ' ' && input[end] != '\t' && input[end] != EOF) end++;
+
+    int length = end - start;
+    char * result = (char*)malloc(sizeof(char) * (length + 1));
+    memcpy(result, input + start, end - start);
+    result[length] = '\0';
+
+    return result;
+}
+
 #define dump_string(x) printf(#x ": %s\n", x);
 #define dump_int(x) printf(#x ": %d\n", x);
 
@@ -232,23 +249,7 @@ void process_command(const char * line)
 {
     if (line == NULL) return;
 
-    int length = strlen(line);
-    char * name = (char*)malloc(sizeof(char) * length + 1);
-    memset(name, '\0', sizeof(char) * length + 1);
-
-    // Isolate the first word
-    for (int i = 0, index = 0; i < length + 1; ++i)
-    {
-        if (line[i] == ' ' && index > 0)
-        {
-            break;
-        }
-        else if (line[i] != ' ')
-        {
-            name[index] = line[i];
-            ++index;
-        }
-    }
+    char * name = string_first_word(line);
 
     // Find the corresponding command
     command_t cmd;
@@ -268,6 +269,8 @@ void process_command(const char * line)
     if (cmd.name == NULL) {
         say("I don't understand...");
     }
+
+    free(name);
 }
 
 // Main

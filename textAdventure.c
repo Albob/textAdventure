@@ -5,12 +5,25 @@
 *
 */
 
+/// {{{ Includes and forward declarations 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
+void cmd_help(const char * line);
+void cmd_take(const char * line);
+void cmd_list(const char * line);
+void cmd_look(const char * line);
+void cmd_exit(const char * line);
+
+#define MAX_INVENTORY 32
+#define MAX_ITEMS     8
+
+/// }}}
+/// {{{ Utils 
 void say(const char * message)
 {
     printf("%s\n", message);
@@ -47,10 +60,9 @@ char * string_first_word(const char * input)
 #define dump_string(x) printf(#x ": %s\n", x);
 #define dump_int(x) printf(#x ": %d\n", x);
 
-#define MAX_INVENTORY 32
-#define MAX_ITEMS     8
+/// }}} Utils
+/// {{{ Game types 
 
-// Game types
 typedef void (*command_func_t)(const char * line);
 
 typedef struct {
@@ -120,19 +132,15 @@ typedef struct {
     const char* inventory[MAX_INVENTORY];
 } player_t;
 
+/// }}} Game types
+/// {{{ Globals 
+
 #define COM_HELP     "help"
 #define COM_TAKE     "take"
 #define COM_LIST     "list"
 #define COM_LOOK     "look"
 #define COM_EXIT     "exit"
 
-void cmd_help(const char * line);
-void cmd_take(const char * line);
-void cmd_list(const char * line);
-void cmd_look(const char * line);
-void cmd_exit(const char * line);
-
-// Globals
 command_t g_command_list[] = {
     { COM_HELP, "Displays this help.", cmd_help },
     { COM_TAKE, "Takes <something> and puts it in your inventory.", cmd_take },
@@ -146,7 +154,9 @@ static player_t g_player;
 static scene_t g_current_scene;
 static scene_t g_first_scene;
 
-// Command handlers
+/// }}}
+/// {{{ Command handlers 
+
 void cmd_help(const char * line)
 {
     say("Here are the commands you can type and their expected results:");
@@ -204,7 +214,9 @@ void cmd_exit(const char * line)
     g_must_exit = 1;
 }
 
-// Command parsing
+/// }}}
+/// {{{ Command parsing 
+
 char * command_generator(const char * text, int state)
 {
     static int index, length;
@@ -273,7 +285,9 @@ void process_command(const char * line)
     free(name);
 }
 
-// Main
+/// }}}
+/// {{{ Main 
+
 int main(int arg_number, char * arguments[])
 {
     // Initializing the Readline library
@@ -330,4 +344,6 @@ int main(int arg_number, char * arguments[])
     puts("See you next time!!");
     return 0;
 }
+
+/// }}}
 

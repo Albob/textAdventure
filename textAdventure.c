@@ -174,8 +174,27 @@ void cmd_help(const char * line)
 
 void cmd_take(const char * line)
 {
-    say("You typed:");
-    say(line);
+    char * start = strstr(line, COM_TAKE);
+    int take_len = strlen(COM_TAKE);
+    int offset = strspn(start + take_len, " ");
+
+    const char * warning = "You must take something!";
+
+    if (offset ==0)
+    {
+        say(warning);
+        return;
+    }
+
+    char * object = start + take_len + offset;
+
+    if (strlen(object) ==0)
+    {
+        say(warning);
+        return;
+    }
+
+    printf("$ The object you want is: %s\n", object);
 }
 
 void cmd_list(const char * line)
@@ -351,7 +370,9 @@ int main(int arg_number, char * arguments[])
     scene_addItem(&g_current_scene, &soap);
 
     // Game loop
-    puts("Welcome, to ADVENTURE GAME!!\n(Type the action you want to do, or \"help\" to list the commands).");
+    say("Welcome, to ADVENTURE GAME!!\n");
+    cmd_look(NULL);
+    say("\nType the action you want to do, or \"help\" to list the commands).");
     char * line = NULL;
 
     do

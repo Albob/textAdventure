@@ -241,6 +241,32 @@ char * command_generator(const char * text, int state)
     return NULL;
 }
 
+char * item_generator(const char * text, int state)
+{
+    static item_t * item;
+    static int length;
+
+    if (!text) return NULL;
+
+    if (state == 0)
+    {
+        item = g_current_scene.first_item;
+        length = strlen(text);
+    }
+
+    while (item != NULL)
+    {
+        char * name = item->name;
+        item = item->nextInScene;
+
+        if (strncmp(name, text, length) == 0) {
+            return string_copy(name);
+        }
+    }
+
+    return NULL;
+}
+
 char ** custom_completer(const char * text, int start, int end)
 {
     rl_attempted_completion_over = 1; // prevent readline from providing default completion
@@ -252,6 +278,14 @@ char ** custom_completer(const char * text, int start, int end)
 
     if (start == 0 || start == first_char) {
         matches = rl_completion_matches(text, command_generator);
+    }
+    else
+    {
+        char * cmd = string_first_word(rl_line_buffer);
+        if (0 == strncmp(cmd, COM_TAKE, 20)) {
+            matches = rl_completion_matches(text, item_generator);
+        }
+        free(cmd);
     }
 
     return matches;
@@ -305,7 +339,7 @@ int main(int arg_number, char * arguments[])
     knife.id = "item_knife";
     knife.name = "knife";
     knife.inventory_desc = "This is a sharp meat knife.";
-    knife.scene_desc = "There's a knife on the table.";
+    knife.scene_desc = "There's a *knife* on the table.";
     scene_addItem(&g_current_scene, &knife);
 
     item_t soap;
@@ -313,7 +347,7 @@ int main(int arg_number, char * arguments[])
     soap.id = "item_soap";
     soap.name = "liquid soap";
     soap.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
-    soap.scene_desc = "There's liquid soap next to the sink.";
+    soap.scene_desc = "There's *liquid soap* next to the sink.";
     scene_addItem(&g_current_scene, &soap);
 
     // Game loop

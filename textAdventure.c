@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -24,9 +25,24 @@ void cmd_exit(const char * line);
 
 /// }}}
 /// {{{ Utils 
-void say(const char * message)
+void say(const char * message, int insert_newline)
 {
-    printf("%s\n", message);
+    if (message == NULL) return;
+    struct timespec delay, remaining;
+    delay.tv_sec = 0;
+    delay.tv_nsec = 20 * 1000 * 1000;
+    int i = 0;
+    while (message[i] != '\0')
+    {
+        putchar(message[i]);
+        fflush(stdout);
+        i++;
+        nanosleep(&delay, &remaining);
+    }
+
+    if (insert_newline) {
+        putchar('\n');
+    }
 }
 
 char * string_copy(const char * str)
@@ -159,7 +175,7 @@ static scene_t g_first_scene;
 
 void cmd_help(const char * line)
 {
-    say("Here are the commands you can type and their expected results:");
+    say("Here are the commands you can type and their expected results:", 1);
     for (int i = 0; ; ++i)
     {
         command_t cmd = g_command_list[i];
@@ -182,7 +198,7 @@ void cmd_take(const char * line)
 
     if (offset ==0)
     {
-        say(warning);
+        say(warning, 1);
         return;
     }
 
@@ -190,7 +206,7 @@ void cmd_take(const char * line)
 
     if (strlen(object) ==0)
     {
-        say(warning);
+        say(warning, 1);
         return;
     }
 
@@ -203,11 +219,11 @@ void cmd_list(const char * line)
 
     if (item == NULL)
     {
-        say("Your inventory is empty.");
+        say("Your inventory is empty.", 1);
     }
     else
     {
-        say("In your bag you have:");
+        say("In your bag you have:", 1);
         for (int i = 0; ; ++i)
         {
             item = g_player.inventory[i];
@@ -219,13 +235,17 @@ void cmd_list(const char * line)
 
 void cmd_look(const char * line)
 {
-    say(g_current_scene.description);
+    say(g_current_scene.description, 0);
     item_t * item = g_current_scene.first_item;
+
     while (item != NULL)
     {
-        say(item->scene_desc);
+        say(" ", 0);
+        say(item->scene_desc, 0);
         item = item->nextInScene;
     }
+
+    say("", 1);
 }
 
 void cmd_exit(const char * line)
@@ -332,7 +352,7 @@ void process_command(const char * line)
     }
 
     if (cmd.name == NULL) {
-        say("I don't understand...");
+        say("I don't understand...", 1);
     }
 
     free(name);
@@ -370,9 +390,15 @@ int main(int arg_number, char * arguments[])
     scene_addItem(&g_current_scene, &soap);
 
     // Game loop
-    say("Welcome, to ADVENTURE GAME!!\n");
+    say("Welcome, to ADVENTURE GAME!!", 1);
+    say("", 1);
+    struct timespec delay, remaining;
+    delay.tv_sec = 0;
+    delay.tv_nsec = 500 * 1000 * 1000;
+    nanosleep(&delay, &remaining);
     cmd_look(NULL);
-    say("\nType the action you want to do, or \"help\" to list the commands).");
+    say("", 1);
+    say("Type the action you want to do, or \"help\" to list the commands. You can also press the 'tab' key to complete words).", 1);
     char * line = NULL;
 
     do

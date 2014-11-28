@@ -58,19 +58,8 @@ char * string_copy(const char * str)
 
 char * string_first_word(const char * input)
 {
-    if (input == NULL) return NULL;
-    int start = 0;
-    while (input[start] == ' ' || input[start] == '\t') start++;
-    if (input[start] == '\0') return NULL;
-    int end = start + 1;
-    while (input[end] != ' ' && input[end] != '\t' && input[end] != EOF) end++;
-
-    int length = end - start;
-    char * result = (char*)malloc(sizeof(char) * (length + 1));
-    memcpy(result, input + start, end - start);
-    result[length] = '\0';
-
-    return result;
+    char * result = string_copy(input);
+    return strtok(result, " ");
 }
 
 #define dump_string(x) printf(#x ": %s\n", x);

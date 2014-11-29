@@ -23,6 +23,10 @@ ${GAME}: ${LIB} ${GAME}.c
 ${UNITTEST}: ${LIB} ${UNITTEST}.c
 	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB} ${LINK_FLAGS}
 
+${BUILD_DIR}/array.o: lib/albob/array.c lib/albob/array.h
+	@mkdir -p ${BUILD_DIR}
+	@${CC} ${CFLAGS} -c $< -o $@
+
 ${BUILD_DIR}/string.o: lib/albob/string.c lib/albob/string.h
 	@mkdir -p ${BUILD_DIR}
 	@${CC} ${CFLAGS} -c $< -o $@
@@ -31,7 +35,7 @@ ${BUILD_DIR}/debug.o: lib/albob/debug.c lib/albob/debug.h
 	@mkdir -p ${BUILD_DIR}
 	@${CC} ${CFLAGS} -c $< -o $@
 
-${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o
+${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o ${BUILD_DIR}/array.o 
 	@echo $^
 	@ar ruv ${LIB} $^
 	@ranlib ${LIB}

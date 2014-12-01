@@ -27,21 +27,11 @@ void cmd_exit(const char * line);
 /// {{{ Utils 
 void say(const char * message, int insert_newline)
 {
-    if (message == NULL) return;
-    struct timespec delay, remaining;
-    delay.tv_sec = 0;
-    delay.tv_nsec = 20 * 1000 * 1000;
-    int i = 0;
-    while (message[i] != '\0')
-    {
-        putchar(message[i]);
-        fflush(stdout);
-        i++;
-        nanosleep(&delay, &remaining);
-    }
-
     if (insert_newline) {
-        putchar('\n');
+        puts(message);
+    }
+    else {
+        fputs(message, stdout);
     }
 }
 

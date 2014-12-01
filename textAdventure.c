@@ -369,6 +369,7 @@ int main(int arg_number, char * arguments[])
     scene_addItem(&g_current_scene, &soap);
 
     // Game loop
+    printf("\033[2J\033[1;1H");  // "Home"s the text cursor, ie: reset the terminal so the first character is in the top-left corner
     say("Welcome, to ADVENTURE GAME!!", 1);
     say("", 1);
     struct timespec delay, remaining;
@@ -377,7 +378,7 @@ int main(int arg_number, char * arguments[])
     nanosleep(&delay, &remaining);
     cmd_look(NULL);
     say("", 1);
-    say("Type the action you want to do, or \"help\" to list the commands. You can also press the 'tab' key to complete words).", 1);
+    say("(Type in the action you want to do, or type \"help\" to list the commands. You can also press the 'tab' key to complete words).", 1);
     char * line = NULL;
 
     do

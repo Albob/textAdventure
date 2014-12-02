@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -22,6 +21,8 @@ void cmd_exit(const char * line);
 
 #define MAX_INVENTORY 32
 #define MAX_ITEMS     8
+
+#define SAY(x) say((x), 1)
 
 /// }}}
 /// {{{ Utils 
@@ -71,7 +72,10 @@ typedef struct item_t {
     char* name;
     char* inventory_desc;
     char* scene_desc;
+    struct item_t * previousInScene;
     struct item_t * nextInScene;
+    struct item_t * previousInInventory;
+    struct item_t * nextInInventory;
 } item_t;
 
 void item_init(item_t * i)
@@ -80,6 +84,10 @@ void item_init(item_t * i)
     i->name = "";
     i->inventory_desc = "";
     i->scene_desc = "";
+    i->previousInScene = NULL;
+    i->nextInScene = NULL;
+    i->previousInInventory = NULL;
+    i->nextInInventory = NULL;
 }
 
 typedef struct {
@@ -118,6 +126,12 @@ void scene_addItem(scene_t * scene, item_t * item)
 void scene_removeItem(scene_t * scene, item_t * item)
 {
     if (scene == NULL || item == NULL) return;
+
+}
+
+void inventory_addItem(item_t * item)
+{
+    if (item == NULL) return;
 
 }
 
@@ -169,13 +183,14 @@ void cmd_help(const char * line)
 
 void cmd_take(const char * line)
 {
+    const char * warning = "You must take something!";
+
+    // Find the position of the name of the object in the command
     char * start = strstr(line, COM_TAKE);
     int take_len = strlen(COM_TAKE);
     int offset = strspn(start + take_len, " ");
 
-    const char * warning = "You must take something!";
-
-    if (offset ==0)
+    if (offset == 0)
     {
         say(warning, 1);
         return;
@@ -189,7 +204,23 @@ void cmd_take(const char * line)
         return;
     }
 
-    printf("$ The object you want is: %s\n", object);
+    item_t * item = g_current_scene.first_item;
+
+    while (item != NULL)
+    {
+        char * name = item->name;
+        item = item->nextInScene;
+
+        if (strcmp(name, object) == 0) {
+            break;
+        }
+    }
+
+    if (item != NULL)
+    {
+        inventory_addItem(item);
+        scene_removeItem(&g_current_scene, item);
+    }
 }
 
 void cmd_list(const char * line)
@@ -370,15 +401,11 @@ int main(int arg_number, char * arguments[])
 
     // Game loop
     printf("\033[2J\033[1;1H");  // "Home"s the text cursor, ie: reset the terminal so the first character is in the top-left corner
-    say("Welcome, to ADVENTURE GAME!!", 1);
-    say("", 1);
-    struct timespec delay, remaining;
-    delay.tv_sec = 0;
-    delay.tv_nsec = 500 * 1000 * 1000;
-    nanosleep(&delay, &remaining);
+    SAY("Welcome, to ADVENTURE GAME!!");
+    SAY("");
     cmd_look(NULL);
-    say("", 1);
-    say("(Type in the action you want to do, or type \"help\" to list the commands. You can also press the 'tab' key to complete words).", 1);
+    SAY("");
+    SAY("(Type in the action you want to do, or type \"help\" to list the commands. You can also press the 'tab' key to complete words).");
     char * line = NULL;
 
     do

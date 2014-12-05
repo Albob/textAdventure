@@ -423,9 +423,12 @@ int main(int arg_number, char * arguments[])
         
         if (strlen(line) > 0) {
             add_history(line);
+            process_command(line);
+        }
+        else {
+            SAY("Come on, don't be shy!");
         }
 
-        process_command(line);
     } while (g_must_exit == 0);
 
     // exit

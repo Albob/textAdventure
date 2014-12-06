@@ -186,7 +186,7 @@ void cmd_take(const char * line)
 
     if (offset == 0)
     {
-        say(warning, 1);
+        SAY(warning);
         return;
     }
 
@@ -194,7 +194,7 @@ void cmd_take(const char * line)
 
     if (strlen(object) ==0)
     {
-        say(warning, 1);
+        SAY(warning);
         return;
     }
 
@@ -351,7 +351,7 @@ void process_command(const char * p_line)
 
         if (strcmp(cmd.name, name) == 0)
         {
-            cmd.callback(line);
+            cmd.callback(p_line);
             break;
         }
     }
@@ -393,6 +393,14 @@ int main(int arg_number, char * arguments[])
     soap.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
     soap.scene_desc = "There's *liquid soap* next to the sink.";
     scene_addItem(&g_current_scene, &soap);
+
+    item_t saucisson;
+    item_init(&saucisson);
+    saucisson.id = "item_saucisson";
+    saucisson.name = "saussice seche";
+    saucisson.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
+    saucisson.scene_desc = "There's a delicious *saussice seche* in the cupboard.";
+    scene_addItem(&g_current_scene, &saucisson);
 
     // Game loop
     printf("\033[2J\033[1;1H");  // "Home"s the text cursor, ie: reset the terminal so the first character is in the top-left corner

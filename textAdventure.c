@@ -47,12 +47,6 @@ char * string_copy(const char * str)
     return new_str;
 }
 
-char * string_first_word(const char * input)
-{
-    char * result = string_copy(input);
-    return strtok(result, " ");
-}
-
 #define dump_string(x) printf(#x ": %s\n", x);
 #define dump_int(x) printf(#x ": %d\n", x);
 
@@ -322,16 +316,16 @@ char ** custom_completer(const char * text, int start, int end)
 
     char ** matches = NULL;
 
-    int first_char = 0;
-    while (rl_line_buffer[first_char] == ' ') { first_char++; }
+    int first_char = strspn(rl_line_buffer, " \t");
 
-    if (start == 0 || start == first_char) {
+    if (start == first_char) {
         matches = rl_completion_matches(text, command_generator);
     }
     else
     {
-        char * cmd = string_first_word(rl_line_buffer);
-        if (0 == strncmp(cmd, COM_TAKE, 20)) {
+        char * cmd = string_copy(rl_line_buffer);
+        char * first = strtok(cmd, " \t");
+        if (first != NULL && strcmp(first, COM_TAKE) == 0) {
             matches = rl_completion_matches(text, item_generator);
         }
         free(cmd);
@@ -340,11 +334,12 @@ char ** custom_completer(const char * text, int start, int end)
     return matches;
 }
 
-void process_command(const char * line)
+void process_command(const char * p_line)
 {
-    if (line == NULL) return;
+    if (p_line == NULL) return;
 
-    char * name = string_first_word(line);
+    char * line = string_copy(p_line);
+    char * name = strtok(line, " \t");
 
     // Find the corresponding command
     command_t cmd;
@@ -365,7 +360,7 @@ void process_command(const char * line)
         say("I don't understand...", 1);
     }
 
-    free(name);
+    free(line);
 }
 
 /// }}}

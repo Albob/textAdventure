@@ -112,6 +112,7 @@ void scene_addItem(scene_t * scene, item_t * item)
             last_item = last_item->nextInScene;
         }
         last_item->nextInScene = item;
+        item->previousInScene = last_item;
     }
 
     item->nextInScene = NULL;
@@ -121,18 +122,14 @@ void scene_removeItem(scene_t * scene, item_t * item)
 {
     if (scene == NULL || item == NULL) return;
 
-    printf("Removing item '%s'\n", item->name); 
-    
     item_t * previous = item->previousInScene;
     item_t * next = item->nextInScene;
 
     if (previous != NULL) {
-        printf("Previous item '%s'\n", previous->name); 
         previous->nextInScene = next; 
     }
 
     if (next != NULL) {
-        printf("Next item '%s'\n", next->name); 
         next->previousInScene = previous; 
     }
 
@@ -213,7 +210,7 @@ void cmd_take(const char * line)
     }
 
     char * object = start + take_len + offset;
-    printf("you want '%s'\n", object);
+
     if (strlen(object) ==0)
     {
         SAY(warning);
@@ -225,7 +222,6 @@ void cmd_take(const char * line)
     while (item != NULL)
     {
         char * name = item->name;
-        printf("comparing with '%s'\n", name);
 
         if (strncmp(name, object, strlen(name)) == 0) {
             break;

@@ -29,11 +29,11 @@ static struct item_t * g_inventory_first_item;
 
 typedef void (*command_func_t)(const char * line);
 
-typedef struct {
+typedef struct command_t {
     char * name;
     char * description;
     command_func_t callback;
-} command_t ;
+} command_t;
 
 typedef struct item_t {
     char* id;
@@ -58,10 +58,10 @@ void item_init(item_t * i)
     i->nextInInventory = NULL;
 }
 
-typedef struct {
+typedef struct scene_t {
     char* id;
     char* description;
-    item_t * first_item;
+    item_t * firstItem;
 } scene_t;
 
 void scene_init(scene_t * s, char* id, char* description)
@@ -69,19 +69,19 @@ void scene_init(scene_t * s, char* id, char* description)
     if (s == NULL) return;
     s->id = id;
     s->description = description;
-    s->first_item = NULL;
+    s->firstItem = NULL;
 }
 
 void scene_addItem(scene_t * scene, item_t * item)
 {
     if (scene == NULL || item == NULL) return;
     
-    if (scene->first_item == NULL) {
-        scene->first_item = item;
+    if (scene->firstItem == NULL) {
+        scene->firstItem = item;
     }
     else
     {
-        item_t * last_item = scene->first_item;
+        item_t * last_item = scene->firstItem;
         while (last_item->nextInScene != NULL) {
             last_item = last_item->nextInScene;
         }
@@ -107,8 +107,8 @@ void scene_removeItem(scene_t * scene, item_t * item)
         next->previousInScene = previous; 
     }
 
-    if (item == scene->first_item) {
-        scene->first_item = next;
+    if (item == scene->firstItem) {
+        scene->firstItem = next;
     }
 
     item->nextInScene = NULL;
@@ -201,7 +201,7 @@ void cmd_take(const char * line)
         return;
     }
 
-    item_t * item = g_current_scene.first_item;
+    item_t * item = g_current_scene.firstItem;
 
     while (item != NULL)
     {
@@ -247,7 +247,7 @@ void cmd_list(const char * line)
 void cmd_look(const char * line)
 {
     say(g_current_scene.description, 1);
-    item_t * item = g_current_scene.first_item;
+    item_t * item = g_current_scene.firstItem;
 
     while (item != NULL)
     {
@@ -297,7 +297,7 @@ char * item_generator(const char * text, int state)
 
     if (state == 0)
     {
-        item = g_current_scene.first_item;
+        item = g_current_scene.firstItem;
         length = strlen(text);
     }
 

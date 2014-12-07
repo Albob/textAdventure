@@ -13,6 +13,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include "utils.h"
+
 void cmd_help(const char * line);
 void cmd_take(const char * line);
 void cmd_list(const char * line);
@@ -22,35 +24,7 @@ void cmd_exit(const char * line);
 struct item_t;
 static struct item_t * g_inventory_first_item;
 
-#define SAY(x) say((x), 1)
-
 /// }}}
-/// {{{ Utils 
-void say(const char * message, int insert_newline)
-{
-    if (insert_newline) {
-        puts(message);
-    }
-    else {
-        fputs(message, stdout);
-    }
-}
-
-char * string_copy(const char * str)
-{
-    if (str == NULL) return NULL;
-
-    size_t length = strlen(str);
-    char * new_str = (char*)malloc(sizeof(char) * length + 1);
-    strcpy(new_str, str);
-
-    return new_str;
-}
-
-#define dump_string(x) printf(#x ": %s\n", x);
-#define dump_int(x) printf(#x ": %d\n", x);
-
-/// }}} Utils
 /// {{{ Game types 
 
 typedef void (*command_func_t)(const char * line);

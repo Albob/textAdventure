@@ -17,8 +17,8 @@ BUILD_DIR=.build
 
 all: ${GAME} ${UNITTEST} 
 
-${GAME}: ${LIB} ${GAME}.c
-	@${CC} ${CFLAGS} -o ${GAME} ${GAME}.c ${LIB} ${LINK_FLAGS}
+${GAME}: utils.c ${GAME}.c ${LIB}
+	@${CC} ${CFLAGS} -o ${GAME} utils.c ${GAME}.c ${LIB} ${LINK_FLAGS}
 
 ${UNITTEST}: ${LIB} ${UNITTEST}.c
 	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB} ${LINK_FLAGS}

@@ -121,12 +121,34 @@ void scene_removeItem(scene_t * scene, item_t * item)
 {
     if (scene == NULL || item == NULL) return;
 
+    printf("Removing item '%s'\n", item->name); 
+    
+    item_t * previous = item->previousInScene;
+    item_t * next = item->nextInScene;
+
+    if (previous != NULL) {
+        printf("Previous item '%s'\n", previous->name); 
+        previous->nextInScene = next; 
+    }
+
+    if (next != NULL) {
+        printf("Next item '%s'\n", next->name); 
+        next->previousInScene = previous; 
+    }
+
+    if (item == scene->first_item) {
+        scene->first_item = next;
+    }
+
+    item->nextInScene = NULL;
+    item->previousInScene = NULL;
 }
 
 void inventory_addItem(item_t * item)
 {
     if (item == NULL) return;
 
+    printf("TODO: add '%s' to inventory\n", item->name);
 }
 
 // TODO: void releaseScene(scene_t * s);
@@ -162,7 +184,7 @@ static scene_t g_first_scene;
 
 void cmd_help(const char * line)
 {
-    say("Here are the commands you can type and their expected results:", 1);
+    puts("Here are the commands you can type and their expected results:");
     for (int i = 0; ; ++i)
     {
         command_t cmd = g_command_list[i];
@@ -191,7 +213,7 @@ void cmd_take(const char * line)
     }
 
     char * object = start + take_len + offset;
-
+    printf("you want '%s'\n", object);
     if (strlen(object) ==0)
     {
         SAY(warning);
@@ -203,17 +225,23 @@ void cmd_take(const char * line)
     while (item != NULL)
     {
         char * name = item->name;
-        item = item->nextInScene;
+        printf("comparing with '%s'\n", name);
 
-        if (strcmp(name, object) == 0) {
+        if (strncmp(name, object, strlen(name)) == 0) {
             break;
         }
+
+        item = item->nextInScene;
     }
 
     if (item != NULL)
     {
         inventory_addItem(item);
         scene_removeItem(&g_current_scene, item);
+    }
+    else
+    {
+        SAY("There's nothing of that name here...\n");
     }
 }
 
@@ -239,17 +267,14 @@ void cmd_list(const char * line)
 
 void cmd_look(const char * line)
 {
-    say(g_current_scene.description, 0);
+    say(g_current_scene.description, 1);
     item_t * item = g_current_scene.first_item;
 
     while (item != NULL)
     {
-        say(" ", 0);
-        say(item->scene_desc, 0);
+        say(item->scene_desc, 1);
         item = item->nextInScene;
     }
-
-    say("", 1);
 }
 
 void cmd_exit(const char * line)

@@ -132,6 +132,7 @@ void inventory_addItem(item_t * item)
         item->previousInInventory = last_item;
     }
 
+    printf("You stuff the %s in your bag\n", item->name);
     item->nextInInventory = NULL;
 }
 

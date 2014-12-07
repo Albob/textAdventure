@@ -19,8 +19,8 @@ void cmd_list(const char * line);
 void cmd_look(const char * line);
 void cmd_exit(const char * line);
 
-#define MAX_INVENTORY 32
-#define MAX_ITEMS     8
+struct item_t;
+static struct item_t * g_inventory_first_item;
 
 #define SAY(x) say((x), 1)
 
@@ -145,14 +145,23 @@ void inventory_addItem(item_t * item)
 {
     if (item == NULL) return;
 
-    printf("TODO: add '%s' to inventory\n", item->name);
+    if (g_inventory_first_item == NULL) {
+        g_inventory_first_item = item;
+    }
+    else
+    {
+        item_t * last_item = g_inventory_first_item;
+        while (last_item->nextInInventory != NULL) {
+            last_item = last_item->nextInInventory;
+        }
+        last_item->nextInInventory = item;
+        item->previousInInventory = last_item;
+    }
+
+    item->nextInInventory = NULL;
 }
 
 // TODO: void releaseScene(scene_t * s);
-
-typedef struct {
-    const char* inventory[MAX_INVENTORY];
-} player_t;
 
 /// }}} Game types
 /// {{{ Globals 
@@ -172,9 +181,9 @@ command_t g_command_list[] = {
     { NULL, NULL, NULL }
 };
 static int g_must_exit = 0;
-static player_t g_player;
 static scene_t g_current_scene;
 static scene_t g_first_scene;
+static item_t * g_inventory_first_item;
 
 /// }}}
 /// {{{ Command handlers 
@@ -243,20 +252,19 @@ void cmd_take(const char * line)
 
 void cmd_list(const char * line)
 {
-    const char * item = g_player.inventory[0];
+    const item_t * item = g_inventory_first_item;
 
     if (item == NULL)
     {
-        say("Your inventory is empty.", 1);
+        SAY("Your inventory is empty.");
     }
     else
     {
-        say("In your bag you have:", 1);
-        for (int i = 0; ; ++i)
+        SAY("In your bag you have:");
+        while (item != NULL)
         {
-            item = g_player.inventory[i];
-            if (item == NULL) break;
-            printf("%d) %s\n", i, item);
+            printf("- %s\n", item->name);
+            item = item->nextInInventory;
         }
     }
 }
@@ -268,7 +276,7 @@ void cmd_look(const char * line)
 
     while (item != NULL)
     {
-        say(item->scene_desc, 1);
+        SAY(item->scene_desc);
         item = item->nextInScene;
     }
 }
@@ -393,7 +401,7 @@ int main(int arg_number, char * arguments[])
     rl_attempted_completion_function = custom_completer;
 
     // Init the player
-    memset(g_player.inventory, 0, MAX_INVENTORY);
+    g_inventory_first_item = NULL;
 
     // Init the first scene
     scene_init(&g_first_scene, "sc_first", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
@@ -422,6 +430,30 @@ int main(int arg_number, char * arguments[])
     saucisson.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
     saucisson.scene_desc = "There's a delicious *saussice seche* in the cupboard.";
     scene_addItem(&g_current_scene, &saucisson);
+
+    item_t magnet;
+    item_init(&magnet);
+    magnet.id = "item_magnet";
+    magnet.name = "magnet";
+    magnet.inventory_desc = "Its shaped like a strawberry.";
+    magnet.scene_desc = "There's a *magnet* on the fridge door.";
+    scene_addItem(&g_current_scene, &magnet);
+
+    item_t cigarettes;
+    item_init(&cigarettes);
+    cigarettes.id = "item_cigarettes";
+    cigarettes.name = "cigarettes";
+    cigarettes.inventory_desc = "I really should quit...";
+    cigarettes.scene_desc = "";
+    inventory_addItem(&cigarettes);
+
+    item_t keys;
+    item_init(&keys);
+    keys.id = "item_keys";
+    keys.name = "keys";
+    keys.inventory_desc = "Theses are the keys to my car";
+    keys.scene_desc = "";
+    inventory_addItem(&keys);
 
     // Game loop
     printf("\033[2J\033[1;1H");  // "Home"s the text cursor, ie: reset the terminal so the first character is in the top-left corner

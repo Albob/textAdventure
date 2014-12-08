@@ -58,10 +58,18 @@ void item_init(item_t * i)
     i->nextInInventory = NULL;
 }
 
+typedef struct portal_t {
+    char * sceneId;
+    char * description;
+    struct portal_t * nextInScene;
+    struct portal_t * previousInScene;
+} portal_t;
+
 typedef struct scene_t {
     char* id;
     char* description;
     item_t * firstItem;
+    portal_t * firstPortal;
 } scene_t;
 
 void scene_init(scene_t * s, char* id, char* description)
@@ -70,6 +78,7 @@ void scene_init(scene_t * s, char* id, char* description)
     s->id = id;
     s->description = description;
     s->firstItem = NULL;
+    s->firstPortal = NULL;
 }
 
 void scene_addItem(scene_t * scene, item_t * item)
@@ -115,6 +124,21 @@ void scene_removeItem(scene_t * scene, item_t * item)
     item->previousInScene = NULL;
 }
 
+void scene_addPortal(scene_t * scene, portal_t * portal)
+{
+    if (scene->firstPortal == NULL)
+    {
+        scene->firstPortal = portal;
+    }
+    else
+    {
+        portal_t * last_portal = scene->firstPortal;
+        // TODO
+    }
+
+    portal->nextInScene = NULL;
+}
+
 void inventory_addItem(item_t * item)
 {
     if (item == NULL) return;
@@ -134,6 +158,14 @@ void inventory_addItem(item_t * item)
 
     printf("You stuff the %s in your bag\n", item->name);
     item->nextInInventory = NULL;
+}
+
+void portal_init(portal_t * portal)
+{
+    portal->sceneId = NULL;
+    portal->description = NULL;
+    portal->nextInScene = NULL;
+    portal->previousInScene = NULL;
 }
 
 // TODO: void releaseScene(scene_t * s);

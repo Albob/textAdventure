@@ -188,8 +188,7 @@ command_t g_command_list[] = {
     { NULL, NULL, NULL }
 };
 static int g_must_exit = 0;
-static scene_t g_current_scene;
-static scene_t g_first_scene;
+static scene_t * g_current_scene;
 static item_t * g_inventory_first_item;
 
 /// }}}
@@ -233,7 +232,7 @@ void cmd_take(const char * line)
         return;
     }
 
-    item_t * item = g_current_scene.firstItem;
+    item_t * item = g_current_scene->firstItem;
 
     while (item != NULL)
     {
@@ -249,7 +248,7 @@ void cmd_take(const char * line)
     if (item != NULL)
     {
         inventory_addItem(item);
-        scene_removeItem(&g_current_scene, item);
+        scene_removeItem(g_current_scene, item);
     }
     else
     {
@@ -278,8 +277,8 @@ void cmd_list(const char * line)
 
 void cmd_look(const char * line)
 {
-    say(g_current_scene.description, 1);
-    item_t * item = g_current_scene.firstItem;
+    say(g_current_scene->description, 1);
+    item_t * item = g_current_scene->firstItem;
 
     while (item != NULL)
     {
@@ -329,7 +328,7 @@ char * item_generator(const char * text, int state)
 
     if (state == 0)
     {
-        item = g_current_scene.firstItem;
+        item = g_current_scene->firstItem;
         length = strlen(text);
     }
 
@@ -411,8 +410,9 @@ int main(int arg_number, char * arguments[])
     g_inventory_first_item = NULL;
 
     // Init the first scene
-    scene_init(&g_first_scene, "sc_first", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
-    g_current_scene = g_first_scene;
+    scene_t kitchen;
+    scene_init(&kitchen, "sc_kitchen", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
+    g_current_scene = &kitchen;
 
     item_t knife;
     item_init(&knife);
@@ -420,7 +420,7 @@ int main(int arg_number, char * arguments[])
     knife.name = "knife";
     knife.inventory_desc = "This is a sharp meat knife.";
     knife.scene_desc = "There's a *knife* on the table.";
-    scene_addItem(&g_current_scene, &knife);
+    scene_addItem(g_current_scene, &knife);
 
     item_t soap;
     item_init(&soap);
@@ -428,7 +428,7 @@ int main(int arg_number, char * arguments[])
     soap.name = "liquid soap";
     soap.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
     soap.scene_desc = "There's *liquid soap* next to the sink.";
-    scene_addItem(&g_current_scene, &soap);
+    scene_addItem(g_current_scene, &soap);
 
     item_t saucisson;
     item_init(&saucisson);
@@ -436,7 +436,7 @@ int main(int arg_number, char * arguments[])
     saucisson.name = "saussice seche";
     saucisson.inventory_desc = "It smells like lemon. Hummm, lemoooon!";
     saucisson.scene_desc = "There's a delicious *saussice seche* in the cupboard.";
-    scene_addItem(&g_current_scene, &saucisson);
+    scene_addItem(g_current_scene, &saucisson);
 
     item_t magnet;
     item_init(&magnet);
@@ -444,7 +444,7 @@ int main(int arg_number, char * arguments[])
     magnet.name = "magnet";
     magnet.inventory_desc = "Its shaped like a strawberry.";
     magnet.scene_desc = "There's a *magnet* on the fridge door.";
-    scene_addItem(&g_current_scene, &magnet);
+    scene_addItem(g_current_scene, &magnet);
 
     item_t cigarettes;
     item_init(&cigarettes);
@@ -462,8 +462,13 @@ int main(int arg_number, char * arguments[])
     keys.scene_desc = "";
     inventory_addItem(&keys);
 
+    // Init the second scene
+    scene_t living_room;
+    scene_init(&living_room, "sc_livingRoom", "You are in a living room. The rug is old and dusty. An old TV set faces a sofa that has seen better days.");
+    
+
     // Game loop
-    printf("\033[2J\033[1;1H");  // "Home"s the text cursor, ie: reset the terminal so the first character is in the top-left corner
+    printf("\033[2J\033[1;1H");  // Clear the screen
     SAY("Welcome, to ADVENTURE GAME!!");
     SAY("");
     cmd_look(NULL);

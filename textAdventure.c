@@ -61,8 +61,8 @@ void item_init(item_t * i)
 typedef struct portal_t {
     char * sceneId;
     char * description;
-    struct portal_t * nextInScene;
-    struct portal_t * previousInScene;
+    struct portal_t * next;
+    struct portal_t * previous;
 } portal_t;
 
 typedef struct scene_t {
@@ -133,10 +133,14 @@ void scene_addPortal(scene_t * scene, portal_t * portal)
     else
     {
         portal_t * last_portal = scene->firstPortal;
-        // TODO
+        while (last_portal->next != NULL) {
+            last_portal = last_portal->next;
+        }
+        last_portal->next = portal;
+        portal->previous = last_portal;
     }
 
-    portal->nextInScene = NULL;
+    portal->next = NULL;
 }
 
 void inventory_addItem(item_t * item)
@@ -164,8 +168,8 @@ void portal_init(portal_t * portal)
 {
     portal->sceneId = NULL;
     portal->description = NULL;
-    portal->nextInScene = NULL;
-    portal->previousInScene = NULL;
+    portal->next = NULL;
+    portal->previous = NULL;
 }
 
 // TODO: void releaseScene(scene_t * s);
@@ -284,6 +288,16 @@ void cmd_look(const char * line)
     {
         SAY(item->scene_desc);
         item = item->nextInScene;
+    }
+
+    portal_t * portal = g_current_scene->firstPortal;
+    while (portal != NULL)
+    {
+        if (portal->sceneId != NULL && portal->description != NULL)
+        {
+            SAY(portal->description);
+        }
+        portal = portal->next;
     }
 }
 
@@ -410,9 +424,9 @@ int main(int arg_number, char * arguments[])
     g_inventory_first_item = NULL;
 
     // Init the first scene
-    scene_t kitchen;
-    scene_init(&kitchen, "sc_kitchen", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
-    g_current_scene = &kitchen;
+    scene_t sc_kitchen;
+    scene_init(&sc_kitchen, "sc_kitchen", "You see that you are in kitchen. The place looks old and abandonned. The only light is a flickering neon tube above the sink.");
+    g_current_scene = &sc_kitchen;
 
     item_t knife;
     item_init(&knife);
@@ -465,7 +479,11 @@ int main(int arg_number, char * arguments[])
     // Init the second scene
     scene_t living_room;
     scene_init(&living_room, "sc_livingRoom", "You are in a living room. The rug is old and dusty. An old TV set faces a sofa that has seen better days.");
-    
+    portal_t pt_kitchen_to_living;
+    portal_init(&pt_kitchen_to_living);
+    pt_kitchen_to_living.sceneId = "sc_livingRoom";
+    pt_kitchen_to_living.description = "A door leads to the *living room*";
+    scene_addPortal(&sc_kitchen, &pt_kitchen_to_living);
 
     // Game loop
     printf("\033[2J\033[1;1H");  // Clear the screen

@@ -25,7 +25,8 @@
 # Text swap and backup files
 *.swp
 
-# Apple debug symbols
+# Apple & debug symbols
+*.DS_Store
 *.dSym
 textAdventure
 unitTest

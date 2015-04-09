@@ -27,6 +27,19 @@ Parts between square brackets ([]) are optional.
 
 ## File structure:
 
+In the ```data``` folder, there are:
+
+* ```.room``` files: they contain the description of each room (ie: scene) and the objects they contain. They are loaded with the ```loadRoom``` instruction. Ex:
+  
+    ```loadRoom cryopod```
+
+    will load the file ```cryood.room```
+* ```.mp3```, ```.ogg``` or ```.wav``` files. Obviously, music files. Different platforms will play different format, so there will be variants of the same musics. They're played with the ```playMusic``` instruction. Ex:
+
+    ```playMusic ambient1```
+    
+    will play ```ambient1.mp3``` (or ```ambient1.ogg``` depending on the platform)
+
 # Pitch
 
 Vous etes a bord d'un vaisseau spatial de commerce. Vous vous reveillez d'un sommeil cryogenique dans un caisson d'hibernement. Vous verifiez la date sur les commandes du caisson: vous avez 6 mois d'avance sur la date prevue, quelque chose a du se passer. Vous devez atteindre la console de controle du vaisseau pour consulter le journal de bord du systeme de controle du vaisseau.

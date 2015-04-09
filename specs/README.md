@@ -2,10 +2,11 @@
 
 ## User commands
 
-* ```regarder [ autour | <objet> ]```: displays a description of the room around the player or of an object in the room. Othewise says "```Il n'y a pas de <object>```"
+* ```regarder [ <objet> ]```: displays a description of the room around the player or of an object in the room. If the object doesn't exist, says "_je ne vois pas ```<object>```_"
 * ```aide [ <nom_de_commande> ]```: displays the list of commands the player can type
 * ```utiliser [ <objet> ]```: raises the event "onUse" on the object
 * ```prendre [ <objet> ]```: raises the event "onTake" on the object
+* ```inventory```: list all the objects in the inventory
 
 # Text Adventure Script
 

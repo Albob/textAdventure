@@ -21,6 +21,7 @@ Parts between square brackets ([]) are optional.
 * ```setInvisible <object_id>```
 * ```switch <prompt> <choice1> <choice2> [<choice3>]```
 * ```say <actor_id> [ <string_id> | <message> ]```
+* ```clearScreen```
 * ```loadRoom <room_id>```
 * ```playMusic <music_id>```
 * ```setBgColor [ <color_name> | <hex_code> ]```

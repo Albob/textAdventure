@@ -1,6 +1,8 @@
 
 var ta = {
-    textDelayMS : 50,
+    textDelayMS : 40,
+    textPauseMS : 200,
+    instrQueue : [],
     instructions : {
         say: function(iMessage) {
             console.log('Saying: "' + iMessage + '"');
@@ -14,6 +16,7 @@ var ta = {
                 }
                 else {
                     clearInterval(interval);
+                    ta.nextInstruction();
                 }
             }, ta.textDelayMS);
         }
@@ -21,15 +24,42 @@ var ta = {
         clearScreen: function() {
             console.log('Clearing the screen');
             $('body').html('');
+            ta.nextInstruction();
+        }
+    }
+    ,
+    pushInstruction : function(iName, iParams)  {
+        console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
+        console.log(ta.instrQueue);
+        ta.instrQueue.push([iName, iParams]);
+    },
+    nextInstruction : function() {
+        var instr = ta.instrQueue.shift();
+        var instrName = instr[0];
+        var instrParams = instr[1];
+        var func = ta.instructions[instrName];
+
+        console.log('Popping instruction "' + instrName + '" with params "' + instrParams + '"');
+        console.log(ta.instrQueue);
+
+        if (instrParams && instrParams.length > 0) {
+            func.apply(null, instr[1]);
+        }
+        else {
+            func();
         }
     }
 }
 
 function onPageLoaded()
 {
-    ta.instructions.say('Welcome to TextAdventure (Copyright Albob 2015)');
-    ta.instructions.clearScreen();
-    ta.instructions.say('You enter a kitchen.');
-    ta.instructions.say('The air is filthy.');
+    ta.pushInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)']);
+    ta.pushInstruction('clearScreen');
+    ta.pushInstruction('say', ['You wake up in a kitchen.']);
+    ta.pushInstruction('say', ['The air is filthy.']);
+    ta.pushInstruction('say', ['You check your pockets.']);
+    ta.pushInstruction('say', ['.......']);
+    ta.pushInstruction('say', ['Nothing.']);
+    ta.nextInstruction();
 }
 

@@ -1,9 +1,21 @@
 
 var ta = {
+    textDelayMS : 50,
     instructions : {
         say: function(iMessage) {
             console.log('Saying: "' + iMessage + '"');
-            $('<p>').html(iMessage).appendTo('body');
+            var container = $('<p>');
+            container.appendTo('body');
+            var i = 0;
+            var interval = setInterval(function() {
+                if (i <= iMessage.length) {
+                    container.html(iMessage.slice(0, i));
+                    i++;
+                }
+                else {
+                    clearInterval(interval);
+                }
+            }, ta.textDelayMS);
         }
         ,
         clearScreen: function() {

@@ -1,10 +1,12 @@
 
 var ta = {
-    textDelayMS : 40,
-    textPauseMS : 200,
     instrQueue : [],
     instructions : {
-        say: function(iMessage) {
+        say: function(iMessage, iTextDelayMS, iTextPauseMS) {
+
+            var textDelayMS = (iTextDelayMS !== undefined) ? iTextDelayMS : 40;
+            var textPauseMS = (iTextPauseMS !== undefined) ? iTextPauseMS : 400;
+
             console.log('Saying: "' + iMessage + '"');
             var container = $('<p>');
             container.appendTo('body');
@@ -16,9 +18,11 @@ var ta = {
                 }
                 else {
                     clearInterval(interval);
-                    ta.nextInstruction();
+                    setTimeout(function() {
+                        ta.nextInstruction();
+                    }, textPauseMS);
                 }
-            }, ta.textDelayMS);
+            }, textDelayMS);
         }
         ,
         clearScreen: function() {
@@ -53,12 +57,12 @@ var ta = {
 
 function onPageLoaded()
 {
-    ta.pushInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)']);
+    ta.pushInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)', 40, 1000]);
     ta.pushInstruction('clearScreen');
     ta.pushInstruction('say', ['You wake up in a kitchen.']);
     ta.pushInstruction('say', ['The air is filthy.']);
     ta.pushInstruction('say', ['You check your pockets.']);
-    ta.pushInstruction('say', ['.......']);
+    ta.pushInstruction('say', ['.......', 160]);
     ta.pushInstruction('say', ['Nothing.']);
     ta.nextInstruction();
 }

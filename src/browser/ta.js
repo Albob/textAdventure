@@ -62,7 +62,7 @@ function onPageLoaded()
     ta.pushInstruction('say', ['You wake up in a kitchen.']);
     ta.pushInstruction('say', ['The air is filthy.']);
     ta.pushInstruction('say', ['You check your pockets.']);
-    ta.pushInstruction('say', ['.......', 160]);
+    ta.pushInstruction('say', ['....', 300]);
     ta.pushInstruction('say', ['Nothing.']);
     ta.nextInstruction();
 }

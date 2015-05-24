@@ -19,7 +19,7 @@ var ta = {
                 else {
                     clearInterval(interval);
                     setTimeout(function() {
-                        ta.nextInstruction();
+                        ta.doNextInstruction();
                     }, textPauseMS);
                 }
             }, textDelayMS);
@@ -28,16 +28,16 @@ var ta = {
         clearScreen: function() {
             console.log('Clearing the screen');
             $('body').html('');
-            ta.nextInstruction();
+            ta.doNextInstruction();
         }
     }
     ,
-    pushInstruction : function(iName, iParams)  {
+    queueInstruction : function(iName, iParams)  {
         console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
         console.log(ta.instrQueue);
         ta.instrQueue.push([iName, iParams]);
     },
-    nextInstruction : function() {
+    doNextInstruction : function() {
         var instr = ta.instrQueue.shift();
         var instrName = instr[0];
         var instrParams = instr[1];
@@ -57,13 +57,13 @@ var ta = {
 
 function onPageLoaded()
 {
-    ta.pushInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)', 40, 1000]);
-    ta.pushInstruction('clearScreen');
-    ta.pushInstruction('say', ['You wake up in a kitchen.']);
-    ta.pushInstruction('say', ['The air is filthy.']);
-    ta.pushInstruction('say', ['You check your pockets.']);
-    ta.pushInstruction('say', ['.......', 160]);
-    ta.pushInstruction('say', ['Nothing.']);
-    ta.nextInstruction();
+    ta.queueInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)', 40, 1000]);
+    ta.queueInstruction('clearScreen');
+    ta.queueInstruction('say', ['You wake up in a kitchen.']);
+    ta.queueInstruction('say', ['The air is filthy.']);
+    ta.queueInstruction('say', ['You check your pockets.']);
+    ta.queueInstruction('say', ['.......', 160]);
+    ta.queueInstruction('say', ['Nothing.']);
+    ta.doNextInstruction();
 }
 

@@ -62,7 +62,7 @@ var ta = {
         }
     }
     ,
-    getRawScript : function () {
+    getRawScript : function (iOnComplete) {
         console.log('Getting game script.');
         $.ajax({
             url : "tasTest.txt", //?callback=?",
@@ -70,22 +70,49 @@ var ta = {
             success : function (iData, iStatus) {
                 console.log('Got game script.');
                 ta.rawScript = iData;
+                iOnComplete();
             }
         });
+    }
+    ,
+    parseRawScript : function () {
+        var lines = ta.rawScript.split('\n');
+        var lineIndex;
+        var line;
+        var instr;
+
+        console.log("Parsing the raw script.");
+
+        for (lineIndex in lines) {
+            line = lines[lineIndex].trim();
+            instr = line.split(' ')[0];
+
+            if (instr === undefined || instr.length == 0) {
+                continue;
+            }
+
+            if (ta.instructions[instr] != undefined) {
+                console.log("Found an instruction '" + instr
+                    + "' with params '" + line.replace(instr, '').trim() + "'.");
+            }
+            else {
+                console.log("Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1));
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
 function onPageLoaded()
 {
-    ta.getRawScript();
-
-    ta.queueInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)', 40, 1000]);
-    ta.queueInstruction('clearScreen');
-    ta.queueInstruction('say', ['You wake up in a kitchen.']);
-    ta.queueInstruction('say', ['The air is filthy.']);
-    ta.queueInstruction('say', ['You check your pockets.']);
-    ta.queueInstruction('say', ['....', 300]);
-    ta.queueInstruction('say', ['Nothing.']);
-    ta.doNextInstruction();
+    ta.getRawScript(function() {
+        var success = ta.parseRawScript();
+        
+        if (success) {
+            ta.doNextInstruction();
+        }
+    });
 }
 

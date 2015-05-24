@@ -62,7 +62,7 @@ function onPageLoaded()
     ta.queueInstruction('say', ['You wake up in a kitchen.']);
     ta.queueInstruction('say', ['The air is filthy.']);
     ta.queueInstruction('say', ['You check your pockets.']);
-    ta.queueInstruction('say', ['.......', 160]);
+    ta.queueInstruction('say', ['....', 300]);
     ta.queueInstruction('say', ['Nothing.']);
     ta.doNextInstruction();
 }

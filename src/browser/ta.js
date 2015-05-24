@@ -1,5 +1,6 @@
 
 var ta = {
+    rawScript : '',
     instrQueue : [],
     instructions : {
         say: function(iMessage, iTextDelayMS, iTextPauseMS) {
@@ -36,7 +37,8 @@ var ta = {
         console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
         console.log(ta.instrQueue);
         ta.instrQueue.push([iName, iParams]);
-    },
+    }
+    ,
     doNextInstruction : function() {
         var instr = ta.instrQueue.shift();
 
@@ -59,10 +61,24 @@ var ta = {
             func();
         }
     }
+    ,
+    getRawScript : function () {
+        console.log('Getting game script.');
+        $.ajax({
+            url : "tasTest.txt", //?callback=?",
+            dataType : "text",
+            success : function (iData, iStatus) {
+                console.log('Got game script.');
+                ta.rawScript = iData;
+            }
+        });
+    }
 }
 
 function onPageLoaded()
 {
+    ta.getRawScript();
+
     ta.queueInstruction('say', ['Welcome to TextAdventure (Copyright Albob 2015)', 40, 1000]);
     ta.queueInstruction('clearScreen');
     ta.queueInstruction('say', ['You wake up in a kitchen.']);

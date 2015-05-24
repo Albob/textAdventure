@@ -1,0 +1,2 @@
+say "This is a test."
+say "Please finish this script."

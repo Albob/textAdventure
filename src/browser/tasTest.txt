@@ -1,12 +1,14 @@
 say "This is a test."
-say "Please finish this script."
+say "Fast test string display test" 20
+say "Slow test string" 400
   say "Line with leading spaces"
 say "Line with trailing spaces"
   say     "Line with leading and trailing and middle spaces"
 
-
 say 'Welcome to TextAdventure (Copyright Albob 2015)' 40 1000
+
 clearScreen
+
 say 'You wake up in a kitchen.'
 say 'The air is filthy.'
 say 'You check your pockets.'

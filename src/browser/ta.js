@@ -1,10 +1,18 @@
 
+var albob = {
+    assert : function (iPredicate) {
+        if (!iPredicate) {
+            throw new TypeError("Assert failed at line " + iLine);
+        }
+    }
+}
+
 var ta = {
     rawScript : '',
     instrQueue : [],
     instructions : {
         say: function(iMessage, iTextDelayMS, iTextPauseMS) {
-
+            albob.assert(iMessage);
             var textDelayMS = (iTextDelayMS !== undefined) ? iTextDelayMS : 40;
             var textPauseMS = (iTextPauseMS !== undefined) ? iTextPauseMS : 400;
 
@@ -34,8 +42,8 @@ var ta = {
     }
     ,
     queueInstruction : function(iName, iParams)  {
+        albob.assert(iName.trim());
         console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
-        console.log(ta.instrQueue);
         ta.instrQueue.push([iName, iParams]);
     }
     ,
@@ -80,6 +88,8 @@ var ta = {
         var lineIndex;
         var line;
         var instr;
+        var args;
+        var argString;
 
         console.log("Parsing the raw script.");
 
@@ -94,6 +104,15 @@ var ta = {
             if (ta.instructions[instr] != undefined) {
                 console.log("Found an instruction '" + instr
                     + "' with params '" + line.replace(instr, '').trim() + "'.");
+                argString = line.replace(instr, '').trim();
+
+                if (argString) {
+                    args = ta.parseArguments(argString);
+                    ta.queueInstruction(instr, args);
+                }
+                else {
+                    ta.queueInstruction(instr);
+                }
             }
             else {
                 console.log("Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1));
@@ -102,6 +121,53 @@ var ta = {
         }
 
         return true;
+    }
+    ,
+    parseArguments : function (iArgString) {
+        var result = [];
+        var begin = 0;
+        var end = 0;
+
+        var str = '';
+        var nbr = 0;
+
+        albob.assert(iArgString);
+        while (begin < iArgString.length) {
+            if (iArgString[begin] == '"' || iArgString[begin] == "'") {
+                end = begin + 1;
+                while (end < iArgString.length && iArgString[end] != iArgString[begin]) {
+                    end += 1;
+                }
+
+                if (iArgString[end] == iArgString[begin]) {
+                    str = iArgString.slice(begin + 1, end);
+                    result.push(str);
+                    begin = end + 1;
+                }
+                else {
+                    throw new SyntaxError('Parsing error: missing " at end of string');
+                }
+            }
+            else if (!isNaN(parseInt(iArgString[begin]))) {
+                end = begin + 1;
+                while (end < iArgString.length && !isNaN(parseInt(iArgString[end]))) {
+                    end += 1;
+                }
+
+                nbr = iArgString.slice(begin, end);
+                result.push(nbr);
+                begin = end;
+            }
+            else if (iArgString[begin] == ' ') {
+                begin += 1;
+            }
+            else {
+                throw new TypeError("At position " + begin + ": " + iArgString[begin]
+                    + " is not a valid character");
+            }
+        }
+
+        return result;
     }
 }
 

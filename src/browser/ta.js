@@ -39,6 +39,12 @@ var ta = {
     },
     doNextInstruction : function() {
         var instr = ta.instrQueue.shift();
+
+        if (instr === undefined) {
+            console.log("End of the instruction queue.");
+            return;
+        }
+
         var instrName = instr[0];
         var instrParams = instr[1];
         var func = ta.instructions[instrName];

@@ -1,0 +1,11 @@
+clearScreen
+
+say 'Welcome to TextAdventure (Copyright Albob 2015)' 40 1000
+
+clearScreen
+
+say 'You wake up in a kitchen.'
+say 'The air is filthy.'
+say 'You check your pockets.'
+say '....'  300
+say 'Nothing.'

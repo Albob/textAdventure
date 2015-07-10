@@ -1,3 +1,7 @@
+clearScreen
+
+say 'Welcome to TextAdventure (Copyright Albob 2015)' 40
+
 say "This is a test."
 say "Fast test string display test" 20
 say "Slow test string" 400
@@ -5,12 +9,3 @@ say "Slow test string" 400
 say "Line with trailing spaces"
   say     "Line with leading and trailing and middle spaces"
 
-say 'Welcome to TextAdventure (Copyright Albob 2015)' 40 1000
-
-clearScreen
-
-say 'You wake up in a kitchen.'
-say 'The air is filthy.'
-say 'You check your pockets.'
-say '....'  300
-say 'Nothing.'

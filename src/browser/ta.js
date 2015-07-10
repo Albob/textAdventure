@@ -1,8 +1,12 @@
 
 var albob = {
-    assert : function (iPredicate) {
+    assert : function (iPredicate, iMessage) {
+        if (iMessage === undefined) {
+            throw new TypeError("Error: assert expects a valid iMessage");
+        }
+
         if (!iPredicate) {
-            throw new TypeError("Assert failed at line " + iLine);
+            throw new TypeError(iMessage);
         }
     }
 }
@@ -12,7 +16,7 @@ var ta = {
     instrQueue : [],
     instructions : {
         say: function(iMessage, iTextDelayMS, iTextPauseMS) {
-            albob.assert(iMessage);
+            albob.assert(iMessage, "iMessage can't be null");
             var textDelayMS = (iTextDelayMS !== undefined) ? iTextDelayMS : 40;
             var textPauseMS = (iTextPauseMS !== undefined) ? iTextPauseMS : 400;
 
@@ -42,7 +46,7 @@ var ta = {
     }
     ,
     queueInstruction : function(iName, iParams)  {
-        albob.assert(iName.trim());
+        albob.assert(iName.trim(), 'iName must be non-null and non-empty');
         console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
         ta.instrQueue.push([iName, iParams]);
     }
@@ -70,10 +74,12 @@ var ta = {
         }
     }
     ,
-    getRawScript : function (iOnComplete) {
+    getRawScript : function (iScriptURI, iOnComplete) {
+        albob.assert(iScriptURI != null && iScriptURI.length > 0, "iScriptURI isn't valid");
+        albob.assert(iOnComplete !== undefined, 'iOnComplete must be a valid function');
         console.log('Getting game script.');
         $.ajax({
-            url : "tasTest.txt", //?callback=?",
+            url : iScriptURI, //?callback=?",
             dataType : "text",
             success : function (iData, iStatus) {
                 console.log('Got game script.');
@@ -131,7 +137,7 @@ var ta = {
         var str = '';
         var nbr = 0;
 
-        albob.assert(iArgString);
+        albob.assert(iArgString, 'iArgString must be non-null and non-empty');
         while (begin < iArgString.length) {
             if (iArgString[begin] == '"' || iArgString[begin] == "'") {
                 end = begin + 1;
@@ -171,9 +177,9 @@ var ta = {
     }
 }
 
-function onPageLoaded()
+function onPageLoaded(iScriptURI)
 {
-    ta.getRawScript(function() {
+    ta.getRawScript(iScriptURI, function() {
         var success = ta.parseRawScript();
         
         if (success) {

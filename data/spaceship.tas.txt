@@ -1,0 +1,3 @@
+clearScreen
+
+say "Une lumiere clignote au coin de votre regard. La capsule de cryogenisation a mis en route la procedure de reveil."

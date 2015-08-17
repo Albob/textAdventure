@@ -117,6 +117,7 @@ var ta = {
         var args;
         var argString;
         var functionName;
+        var msg;
 
         console.log("Parsing the raw script.");
 
@@ -156,7 +157,9 @@ var ta = {
                 console.log("Closed a function called '" + ta.instrQueueName + "'.");
             }
             else {
-                console.log("Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1));
+                msg = "Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1);
+                console.log(msg);
+                alert(msg);
                 return false;
             }
         }

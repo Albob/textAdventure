@@ -1,3 +1,16 @@
+/*
+ * Albob 2015
+ * 
+ * TAS = Text Adventure Script
+ * 
+ * TAS is a script language aimed at writing text adventure games.
+ * 
+ * Each TAS instruction is implemented as a function in the object ta.instructions.
+ * Each instruction has control on when to trigger the continuation of the script,
+ * by calling ta.doNextInstruction().
+ * 
+ */
+
 
 var albob = {
     assert : function (iPredicate, iMessage) {

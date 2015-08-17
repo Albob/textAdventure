@@ -10,7 +10,11 @@ fed
 say "A bord du Nostradamus. Non... le Nosferatu."
 
 def "onExitCapsule"
-    say "You exit the capsule"
+    say "Vous sortez de la capsule."
 fed
+
+call "onEnterCapsule"
+call "onEnterCapsule"
+call "onExitCapsule"
 
 say "The END."

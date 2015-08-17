@@ -118,6 +118,9 @@ var ta = {
         var argString;
         var functionName;
         var msg;
+        var instrIndex;
+        var calledQueue;
+        var callingQueue;
 
         console.log("Parsing the raw script.");
 
@@ -151,6 +154,20 @@ var ta = {
                 albob.assert(ta.instrQueueName != "main", "Can't close a function in main scope.");
                 ta.instrQueueName = "main";
                 console.log("Closed a function called '" + ta.instrQueueName + "'.");
+            }
+            else if (instr == "call") {
+                functionName = ta.parseFunctionName(argString);
+                albob.assert(ta.instrQueues[functionName],
+                    "Error calling non-existing function: '" + functionName + "'");
+                albob.assert(functionName != ta.instrQueueName,
+                    "Error calling function recursively: '" + functionName + "'");
+                calledQueue = ta.instrQueues[functionName];
+                callingQueue = ta.instrQueues[ta.instrQueueName];
+
+                console.log("Calling function '" + functionName + "' into '" + ta.instrQueueName + "'");
+                for (instrIndex in calledQueue) {
+                    callingQueue.push(calledQueue[instrIndex]);
+                }
             }
             else {
                 msg = "Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1);

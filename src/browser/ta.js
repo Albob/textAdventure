@@ -142,12 +142,8 @@ var ta = {
                 }
             }
             else if (instr == "def") {
+                functionName = ta.parseFunctionName(argString);
                 albob.assert(ta.instrQueueName == "main", "Can't define a nested function in " + ta.instrQueueName);
-                args = ta.parseArguments(argString);
-                albob.assert(args.length == 1, "Error in function definition: too many arguments");
-                functionName = args[0].trim;
-                albob.assert(functionName, "functionName can't be empty.");
-                albob.assert(functionName != "main", "functionName can't be 'main' because it's a reserved name.");
                 ta.instrQueueName = functionName;
                 console.log("Created a function called '" + ta.instrQueueName + "'.");
             }
@@ -212,6 +208,19 @@ var ta = {
         }
 
         return result;
+    }
+    ,
+    parseFunctionName : function (iArgString) {
+        var args = ta.parseArguments(iArgString);
+        var functionName = "";
+
+        albob.assert(args.length == 1, "Error in function definition: too many arguments");
+        functionName = args[0].trim();
+        albob.assert(functionName, "Error in function definition: the name can't be empty.");
+        albob.assert(functionName != "main",
+            "Error in function definition: the name can't be 'main' because it's a reserved name.");
+
+        return functionName;
     }
 }
 

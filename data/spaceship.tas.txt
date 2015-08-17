@@ -1,3 +1,16 @@
 clearScreen
 
-say "Une lumiere clignote au coin de votre regard. La capsule de cryogenisation a mis en route la procedure de reveil."
+say "Loin dans l'espace - L'an 3024."
+
+def "onEnterCapsule"
+    say "Une lumiere clignote au coin de votre regard."
+    say "La capsule de cryogenisation a mis en route la procedure de reveil."
+fed
+
+say "A bord du Nostradamus. Non... le Nosferatu."
+
+def "onExitCapsule"
+    say "You exit the capsule"
+fed
+
+say "The END."

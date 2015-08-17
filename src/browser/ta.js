@@ -26,7 +26,8 @@ var albob = {
 
 var ta = {
     rawScript : '',
-    instrQueue : [],
+    instrQueues : { 'main': [] },
+    instrQueueName : 'main',
     instructions : {
         say: function(iMessage, iTextDelayMS, iTextPauseMS) {
             albob.assert(iMessage, "iMessage can't be null");
@@ -59,13 +60,19 @@ var ta = {
     }
     ,
     queueInstruction : function(iName, iParams)  {
+        var queue;
+
         albob.assert(iName.trim(), 'iName must be non-null and non-empty');
-        console.log('Pushing instruction "' + iName + '" with params "' + iParams + '"');
-        ta.instrQueue.push([iName, iParams]);
+        console.log('Pushing instruction "' + iName + '" with params "' + iParams + '" on queue "' + ta.instrQueueName + '"');
+        if (!ta.instrQueues[ta.instrQueueName]) {
+            ta.instrQueues[ta.instrQueueName] = [];
+        }
+        queue = ta.instrQueues[ta.instrQueueName];
+        queue.push([iName, iParams]);
     }
     ,
     doNextInstruction : function() {
-        var instr = ta.instrQueue.shift();
+        var instr = ta.instrQueues[ta.instrQueueName].shift();
 
         if (instr === undefined) {
             console.log("End of the instruction queue.");
@@ -77,7 +84,7 @@ var ta = {
         var func = ta.instructions[instrName];
 
         console.log('Popping instruction "' + instrName + '" with params "' + instrParams + '"');
-        console.log(ta.instrQueue);
+        // console.log(ta.instrQueues[ta.instrQueueName]);
 
         if (instrParams && instrParams.length > 0) {
             func.apply(null, instr[1]);
@@ -109,21 +116,21 @@ var ta = {
         var instr;
         var args;
         var argString;
+        var functionName;
 
         console.log("Parsing the raw script.");
 
         for (lineIndex in lines) {
             line = lines[lineIndex].trim();
             instr = line.split(' ')[0];
+            argString = line.replace(instr, '').trim();
 
             if (instr === undefined || instr.length == 0) {
                 continue;
             }
 
             if (ta.instructions[instr] != undefined) {
-                console.log("Found an instruction '" + instr
-                    + "' with params '" + line.replace(instr, '').trim() + "'.");
-                argString = line.replace(instr, '').trim();
+                console.log("Found an instruction '" + instr + "' with params '" + argString + "'.");
 
                 if (argString) {
                     args = ta.parseArguments(argString);
@@ -132,6 +139,21 @@ var ta = {
                 else {
                     ta.queueInstruction(instr);
                 }
+            }
+            else if (instr == "def") {
+                albob.assert(ta.instrQueueName == "main", "Can't define a nested function in " + ta.instrQueueName);
+                args = ta.parseArguments(argString);
+                albob.assert(args.length == 1, "Error in function definition: too many arguments");
+                functionName = args[0].trim;
+                albob.assert(functionName, "functionName can't be empty.");
+                albob.assert(functionName != "main", "functionName can't be 'main' because it's a reserved name.");
+                ta.instrQueueName = functionName;
+                console.log("Created a function called '" + ta.instrQueueName + "'.");
+            }
+            else if (instr == "fed") {
+                albob.assert(ta.instrQueueName != "main", "Can't close a function in main scope.");
+                ta.instrQueueName = "main";
+                console.log("Closed a function called '" + ta.instrQueueName + "'.");
             }
             else {
                 console.log("Couldn't find instruction '" + instr + "' at line " + (lineIndex + 1));

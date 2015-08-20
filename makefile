@@ -1,56 +1,33 @@
-CC=gcc
-CFLAGS=-g -Wall -Ilib/ -std=c11
-OS=$(shell uname -s)
 
-ifeq ($(OS), Linux)
-    #$(info "Linux config")
-    LINK_FLAGS=-L/usr/lib/i386-linux-gnu -I/usr/include -lreadline
-else
-    #$(info "MacOS config")
-    LINK_FLAGS=-lreadline
-endif
-
-LIB=libalbob.a
-GAME=textAdventure
 UNITTEST=unitTest
-BUILD_DIR=.build
+BUILD_DIR=../../build/textAdventure
+SRC_DIR=${PWD}
 
-all: ${GAME} ${UNITTEST} 
+help:
+	@echo "Usage:"
+	@echo "   make help:                 Display this message."
+	@echo "   make osx:                  Creates an XCode project with the OS X source."
+	@echo "   make server:               Launches a server to run the browser version."
+	@echo "   make clean-osx-build :     Cleans the XCode project of the OS X version."
 
-${GAME}: utils.c ${GAME}.c ${LIB}
-	@${CC} ${CFLAGS} -o ${GAME} utils.c ${GAME}.c ${LIB} ${LINK_FLAGS}
-
-${UNITTEST}: ${LIB} ${UNITTEST}.c
-	@${CC} ${CFLAGS} -o ${UNITTEST} ${UNITTEST}.c ${LIB} ${LINK_FLAGS}
-
-${BUILD_DIR}/array.o: lib/albob/array.c lib/albob/array.h
-	@mkdir -p ${BUILD_DIR}
-	@${CC} ${CFLAGS} -c $< -o $@
-
-${BUILD_DIR}/string.o: lib/albob/string.c lib/albob/string.h
-	@mkdir -p ${BUILD_DIR}
-	@${CC} ${CFLAGS} -c $< -o $@
-
-${BUILD_DIR}/debug.o: lib/albob/debug.c lib/albob/debug.h
-	@mkdir -p ${BUILD_DIR}
-	@${CC} ${CFLAGS} -c $< -o $@
-
-${LIB}: ${BUILD_DIR}/string.o ${BUILD_DIR}/debug.o ${BUILD_DIR}/array.o 
-	@echo $^
-	@ar ruv ${LIB} $^
-	@ranlib ${LIB}
+osx:
+	@echo "SRC_DIR=${SRC_DIR}"
+	@mkdir -p ${BUILD_DIR}/osx
+	@cd ${BUILD_DIR}/osx; cmake -G Xcode ${SRC_DIR}
 
 .PHONY: clean-tmp
+
+clean-osx-build:
+	@rm -fr ${BUILD_DIR}/osx
 
 clean-tmp:
 	@rm -fr *.swp
 	@rm -fr *.bak
 
-clean-all: clean-tmp
+clean-all: clean-tmp clean-osx-build
 	@rm -fr ${GAME}
 	@rm -fr ${UNITTEST}
 	@rm -fr ${LIB}
 	@rm -fr ${BUILD_DIR}
 	@rm -fr *.o
 	@rm -fr *.dSYM
-

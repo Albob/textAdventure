@@ -15,6 +15,9 @@ osx:
 	@mkdir -p ${BUILD_DIR}/osx
 	@cd ${BUILD_DIR}/osx; cmake -G Xcode ${SRC_DIR}
 
+server:
+	@cd ..; python -m SimpleHTTPServer
+
 .PHONY: clean-tmp
 
 clean-osx-build:

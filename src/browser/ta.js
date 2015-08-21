@@ -11,8 +11,7 @@
  * 
  */
 
-
-var albob = {
+var ta = {
     assert : function (iPredicate, iMessage) {
         if (iMessage === undefined) {
             throw new TypeError("Error: assert expects a valid iMessage");
@@ -22,15 +21,13 @@ var albob = {
             throw new TypeError(iMessage);
         }
     }
-}
-
-var ta = {
+    ,
     rawScript : '',
     instrQueues : { 'main': [] },
     instrQueueName : 'main',
     instructions : {
         say: function(iMessage, iTextDelayMS, iTextPauseMS) {
-            albob.assert(iMessage, "iMessage can't be null");
+            ta.assert(iMessage, "iMessage can't be null");
             var textDelayMS = (iTextDelayMS !== undefined) ? iTextDelayMS : 40;
             var textPauseMS = (iTextPauseMS !== undefined) ? iTextPauseMS : 400;
 
@@ -62,7 +59,7 @@ var ta = {
     queueInstruction : function(iName, iParams)  {
         var queue;
 
-        albob.assert(iName.trim(), 'iName must be non-null and non-empty');
+        ta.assert(iName.trim(), 'iName must be non-null and non-empty');
         console.log('Pushing instruction "' + iName + '" with params "' + iParams + '" on queue "' + ta.instrQueueName + '"');
         if (!ta.instrQueues[ta.instrQueueName]) {
             ta.instrQueues[ta.instrQueueName] = [];
@@ -95,8 +92,8 @@ var ta = {
     }
     ,
     getRawScript : function (iScriptURI, iOnComplete) {
-        albob.assert(iScriptURI != null && iScriptURI.length > 0, "iScriptURI isn't valid");
-        albob.assert(iOnComplete !== undefined, 'iOnComplete must be a valid function');
+        ta.assert(iScriptURI != null && iScriptURI.length > 0, "iScriptURI isn't valid");
+        ta.assert(iOnComplete !== undefined, 'iOnComplete must be a valid function');
         console.log('Getting game script.');
         $.ajax({
             url : iScriptURI, //?callback=?",
@@ -146,20 +143,20 @@ var ta = {
             }
             else if (instr == "def") {
                 functionName = ta.parseFunctionName(argString);
-                albob.assert(ta.instrQueueName == "main", "Can't define a nested function in " + ta.instrQueueName);
+                ta.assert(ta.instrQueueName == "main", "Can't define a nested function in " + ta.instrQueueName);
                 ta.instrQueueName = functionName;
                 console.log("Created a function called '" + ta.instrQueueName + "'.");
             }
             else if (instr == "fed") {
-                albob.assert(ta.instrQueueName != "main", "Can't close a function in main scope.");
+                ta.assert(ta.instrQueueName != "main", "Can't close a function in main scope.");
                 ta.instrQueueName = "main";
                 console.log("Closed a function called '" + ta.instrQueueName + "'.");
             }
             else if (instr == "call") {
                 functionName = ta.parseFunctionName(argString);
-                albob.assert(ta.instrQueues[functionName],
+                ta.assert(ta.instrQueues[functionName],
                     "Error calling non-existing function: '" + functionName + "'");
-                albob.assert(functionName != ta.instrQueueName,
+                ta.assert(functionName != ta.instrQueueName,
                     "Error calling function recursively: '" + functionName + "'");
                 calledQueue = ta.instrQueues[functionName];
                 callingQueue = ta.instrQueues[ta.instrQueueName];
@@ -188,7 +185,7 @@ var ta = {
         var str = '';
         var nbr = 0;
 
-        albob.assert(iArgString, 'iArgString must be non-null and non-empty');
+        ta.assert(iArgString, 'iArgString must be non-null and non-empty');
         while (begin < iArgString.length) {
             if (iArgString[begin] == '"' || iArgString[begin] == "'") {
                 end = begin + 1;
@@ -231,10 +228,10 @@ var ta = {
         var args = ta.parseArguments(iArgString);
         var functionName = "";
 
-        albob.assert(args.length == 1, "Error in function definition: too many arguments");
+        ta.assert(args.length == 1, "Error in function definition: too many arguments");
         functionName = args[0].trim();
-        albob.assert(functionName, "Error in function definition: the name can't be empty.");
-        albob.assert(functionName != "main",
+        ta.assert(functionName, "Error in function definition: the name can't be empty.");
+        ta.assert(functionName != "main",
             "Error in function definition: the name can't be 'main' because it's a reserved name.");
 
         return functionName;

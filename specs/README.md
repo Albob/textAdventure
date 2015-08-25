@@ -50,3 +50,11 @@ Vous etes a bord d'un vaisseau spatial de commerce. Vous vous reveillez d'un som
 ### Description:
 
 C'est un caisson matelasse, incline a 45 degres. Il est tres confortable. Face a vous une porte avec un hublot donne sur l'exterieur. A gauche de la porte, un panneau de commande.
+
+
+# Other links
+
+See:
+
+* https://zaach.github.io/jison/docs/
+* http://www.bottlecaps.de/rr/ui

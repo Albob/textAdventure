@@ -1,0 +1,8 @@
+
+Instruction  ::= Command (Whitespace Parameter)* (Whitespace Comment)?
+StringLiteral
+         ::= '"' [^"]* '"' | "'" [^']* "'"
+          /* ws: explicit */
+Whitespace ::= #x9 | #xA | #xD | #x20
+Comment  ::= '/*' ( [^*] | '*'+ [^*/] )* '*'* '*/'
+          /* ws: explicit */
